@@ -2,6 +2,8 @@
 #include <SDL2/SDL_image.h>
 #include <iostream>
 #include <vector>
+#include <cstdlib>
+#include <ctime>
 #include "RenderWindow.h"
 #include "Entity.h"
 #include "Utils.h"
@@ -73,8 +75,18 @@ int main(int argc, char* args[])
     floor.w = width;
     floor.h = height;
 
+    int roof_y, playHeight_y;
+    roof_y = 20 * scaleF;
+    playHeight_y = height - 2 * (20 * scaleF);
+
+    SDL_Rect playSpace;
+    playSpace.x = 0;
+    playSpace.y = roof_y;
+    playSpace.w = width;
+    playSpace.h = playHeight_y;
+
     //constant primitives
-    const vector<SDL_Rect*> constPrimRects = {&floor};
+    const vector<SDL_Rect*> constPrimRects = {&floor, &playSpace};
 
     //=======================
 
@@ -96,12 +108,7 @@ int main(int argc, char* args[])
 
     bool inAir = false;
 
-    int roof_y, playHeight_y;
-    roof_y = 20 * scaleF;
-    playHeight_y = height - 2 * (20 * scaleF);
-    cout << roof_y << " " << playHeight_y << endl;
-
-    window.loadRect(primRects, 0, roof_y, width, playHeight_y);
+    time_t laserTime = time(NULL);
 
 
     //game loooooooop
@@ -214,13 +221,18 @@ int main(int argc, char* args[])
             accumulator -= deltaTime;
         }
 
+        if (difftime(time(NULL), laserTime) >= 1) {
+            window.loadRect(primRects, rand() % width, rand() % height, 180, 150);
+            laserTime = time(NULL);
+        }
+
         // bring out of bounds character back into scope:
         float checkY = char0.getPos().y;
         if (checkY + char0.getCurrFrame().h > (float)(playHeight_y + roof_y)/scaleF) {
-            char0.setPos(20, (playHeight_y + roof_y)/scaleF - char0.getCurrFrame().h);
+            char0.setPosY((playHeight_y + roof_y)/scaleF - char0.getCurrFrame().h);
 
         } else if (checkY < ((float)roof_y/scaleF)) {
-            char0.setPos(20, roof_y/scaleF);
+            char0.setPosY(roof_y/scaleF);
             playerSpeed = 0;
         }
 

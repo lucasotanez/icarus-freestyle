@@ -84,16 +84,18 @@ const void RenderWindow::drawRects(vector<SDL_Rect*> &prims){
     SDL_SetRenderDrawColor(renderer, 0, 255, 200, 255);
     for (int i = 0; i < prims.size(); i++){
         SDL_RenderDrawRect(renderer, prims[i]);
-        // SDL_RenderFillRect(renderer, prims[i]);
+        SDL_RenderFillRect(renderer, prims[i]);
     }
 
 }
 
 const void RenderWindow::drawRects(const vector<SDL_Rect*> &prims){
     for (int i = 0; i < prims.size(); i++){
-        if (i == 0) SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-        else if (i == 1) SDL_SetRenderDrawColor(renderer, 10, 145, 35, 255);
+        if (i == 0) {
+            SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+            SDL_RenderFillRect(renderer, prims[i]);
+        }
+        else if (i == 1) SDL_SetRenderDrawColor(renderer, 150, 150, 150, 150);
         SDL_RenderDrawRect(renderer, prims[i]);
-        SDL_RenderFillRect(renderer, prims[i]);
     }
 }
