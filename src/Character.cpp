@@ -4,7 +4,7 @@ Character::Character(Vector2f p_pos, SDL_Texture* p_tex, int w, int h, Animation
     : Entity(p_pos, p_tex, w, h), inAir(false), walkRight(&walkR), walkLeft(&walkL), lastAction(0)
 {}
 
-void Character::movePos(int speed, char dir){
+void Character::movePos(float speed, char dir){
     if (dir == 'E'){
         pos.x += speed;
     }
@@ -22,6 +22,16 @@ void Character::movePos(int speed, char dir){
 void Character::setPos(int x, int y)
 {
     pos.x = x;
+    pos.y = y;
+}
+
+void Character::setPosX(int x)
+{
+    pos.x = x;
+}
+
+void Character::setPosY(int y)
+{
     pos.y = y;
 }
 

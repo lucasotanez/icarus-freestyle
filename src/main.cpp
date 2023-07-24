@@ -35,9 +35,6 @@ int main(int argc, char* args[])
     SDL_Texture* walkLeft1 = window.loadTexture("res/img/charLeftWalk1.png");
     SDL_Texture* walkLeft2 = window.loadTexture("res/img/charLeftWalk2.png");
 
-    SDL_Texture* kittyBed = window.loadTexture("res/img/kittybed/kittybed.png");
-    SDL_Texture* kittyBedFilled = window.loadTexture("res/img/kittybed/kittybedfilled.png");
-
 
     //END TEXTURES
     //===============================================================================
@@ -59,15 +56,13 @@ int main(int argc, char* args[])
     //END ANIMATIONS
     //===============================================================================
 
-    Character char0(Vector2f(100, 60), charRight, 64, 64, walkRightAnim, walkLeftAnim);
-
-    Entity catBed(Vector2f(240, 30), kittyBed, 64, 64);
+    Character char0(Vector2f(20, height/scaleF/2), charRight, 64, 64, walkRightAnim, walkLeftAnim);
 
 
     //SERIALIZE ENTITIES HERE (for rendering)
     //=======================
     //first item in list is rendered first (behind all other items)
-    vector<Entity*> entities = {&catBed, &char0};
+    vector<Entity*> entities = {&char0};
 
     //dynamic primitives
     vector<SDL_Rect*> primRects;
@@ -91,7 +86,7 @@ int main(int argc, char* args[])
     float accumulator = 0.0;
     float currentTime = utils::timeInSeconds();
 
-    float playerSpeed = 1;
+    float playerSpeed = -2.5;
 
     float spaceTime = utils::timeInSeconds();
     float upSpeed = 0;
@@ -100,6 +95,14 @@ int main(int argc, char* args[])
     wPressed = sPressed = dPressed = aPressed = spacePressed = shiftPressed = false;
 
     bool inAir = false;
+
+    int roof_y, playHeight_y;
+    roof_y = 20 * scaleF;
+    playHeight_y = height - 2 * (20 * scaleF);
+    cout << roof_y << " " << playHeight_y << endl;
+
+    window.loadRect(primRects, 0, roof_y, width, playHeight_y);
+
 
     //game loooooooop
     //IF GAME IS TAKING A LOT OF CPU: comment out all console logs
@@ -187,40 +190,38 @@ int main(int argc, char* args[])
                 }
             }
             //char0.getPos().print();
-            if (char0.collides(catBed)) cout << "collision detected" << endl;
+            //cout << playerSpeed << endl;
+            //if (char0.collides(catBed)) cout << "collision detected" << endl;
 
-            if (char0.getPos().y >= 0 && char0.getPos().y <= height/scaleF - 64/*height/4*/){
-                if (wPressed){
-                    char0.movePos(playerSpeed, 'N');
+            if (spacePressed){
+                if (playerSpeed < 3.5) {
+                    playerSpeed += 0.4;
                 }
-                if (sPressed){
-                    char0.movePos(playerSpeed, 'S');
+                else playerSpeed = 3.5;
+            }
+            else {
+                if (playerSpeed > -3.5) {
+                    playerSpeed -= 0.2;
                 }
+                else playerSpeed = -3.5;
             }
-            if (char0.getPos().x >= 0 && char0.getPos().x <= width/scaleF - 64){
-                if (aPressed && dPressed){} //Do nothing
-                else if (aPressed){
-                    char0.movePos(playerSpeed, 'W');
-                    char0.playAnimation(&walkLeftAnim, utils::timeInSeconds(), 0.25);
-                }
-                else if (dPressed){
-                    char0.movePos(playerSpeed, 'E');
-                    char0.playAnimation(&walkRightAnim, utils::timeInSeconds(), 0.25);
-                }
-            }
-            if (char0.getPos().x > width/scaleF - 64){
-                char0.setPos(width/scaleF - 64, char0.getPos().y);
-            }
-            if (char0.getPos().x < 0){
-                char0.setPos(0, char0.getPos().y);
-            }
-            if (char0.getPos().y > static_cast<float>(height)/scaleF - 64){
-                char0.setPos(char0.getPos().x, height/scaleF - 64);
-            }
-            if (char0.getPos().y < 0){
-                char0.setPos(char0.getPos().x, 0);
-   	        }
+
+            //cout << (char0.getPos().y) << " | " << (char0.getPos().y) << endl;
+            
+            float next_y = char0.getPos().y + playerSpeed;
+
+            char0.movePos(playerSpeed, 'N');
             accumulator -= deltaTime;
+        }
+
+        // bring out of bounds character back into scope:
+        float checkY = char0.getPos().y;
+        if (checkY + char0.getCurrFrame().h > (float)(playHeight_y + roof_y)/scaleF) {
+            char0.setPos(20, (playHeight_y + roof_y)/scaleF - char0.getCurrFrame().h);
+
+        } else if (checkY < ((float)roof_y/scaleF)) {
+            char0.setPos(20, roof_y/scaleF);
+            playerSpeed = 0;
         }
 
         const float alpha = accumulator / deltaTime; // %?

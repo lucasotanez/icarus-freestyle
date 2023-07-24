@@ -26,7 +26,6 @@ void Entity::changeTex(SDL_Texture* newTex){
     tex = newTex;
 }
 
-
 bool Entity::collides(Entity& ent){
 
     // if one entity is to the right of the other

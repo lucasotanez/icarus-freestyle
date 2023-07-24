@@ -5,7 +5,7 @@
 #include "Entity.h"
 #include <vector>
 
-const uint8_t scaleF = 4;
+const uint8_t scaleF = 3;
 
 class RenderWindow{
     public:
