@@ -2,6 +2,7 @@
 #include <SDL2/SDL_image.h>
 #include <iostream>
 #include <vector>
+#include <deque>
 #include <cstdlib>
 #include <ctime>
 #include "RenderWindow.h"
@@ -65,6 +66,7 @@ int main(int argc, char* args[])
     //=======================
     //first item in list is rendered first (behind all other items)
     vector<Entity*> entities = {&char0};
+    deque<Entity*> obstacles = {};
 
     //dynamic primitives
     vector<SDL_Rect*> primRects;
@@ -208,7 +210,7 @@ int main(int argc, char* args[])
             }
             else {
                 if (playerSpeed > -3.5) {
-                    playerSpeed -= 0.2;
+                    playerSpeed -= 0.15;
                 }
                 else playerSpeed = -3.5;
             }
@@ -221,12 +223,15 @@ int main(int argc, char* args[])
             accumulator -= deltaTime;
         }
 
-        if (difftime(time(NULL), laserTime) >= 1) {
-            window.loadRect(primRects, rand() % width, rand() % height, 180, 150);
+        if (difftime(time(NULL), laserTime) >= 2) {
+            Entity* newEnt = new Entity(Vector2f(1000/scaleF, rand() % (height / scaleF)), charRight, 64, 64);
+            obstacles.push_back(newEnt);
+            cout << "new obstacles" << endl;
+            //window.loadRect(primRects, 1000, rand() % height, 180, 150);
             laserTime = time(NULL);
         }
 
-        // bring out of bounds character back into scope:
+        // bring out of bounds character back into scope BEFORE rendering:
         float checkY = char0.getPos().y;
         if (checkY + char0.getCurrFrame().h > (float)(playHeight_y + roof_y)/scaleF) {
             char0.setPosY((playHeight_y + roof_y)/scaleF - char0.getCurrFrame().h);
@@ -245,6 +250,10 @@ int main(int argc, char* args[])
         window.drawRects(primRects);
 
         for (vector<Entity*>::iterator it = entities.begin(); it != entities.end(); ++it){
+            window.render(**it);
+        }
+        for (deque<Entity*>::iterator it = obstacles.begin(); it != obstacles.end(); ++it){
+            ((*it)->getPos()).print();
             window.render(**it);
         }
 

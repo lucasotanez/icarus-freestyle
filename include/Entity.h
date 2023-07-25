@@ -16,11 +16,10 @@ class Entity{
         bool collides(Entity& ent);
     protected:
         Vector2f pos; // top left corner
-        Vector2f br; // bottom right corner
         SDL_Rect currentFrame;
+        SDL_Rect hitbox;
         SDL_Texture* tex;
 
 };
-
 
 #endif
