@@ -120,7 +120,6 @@ int main(int argc, char* args[])
 
     time_t laserTime = utils::timeInSeconds();
 
-
     //game loooooooop
     //IF GAME IS TAKING A LOT OF CPU: comment out all console logs
 
@@ -229,7 +228,10 @@ int main(int argc, char* args[])
 
             char0.movePos(playerSpeed, 'N');
             for (deque<Entity*>::iterator it = obstacles.begin(); it != obstacles.end(); ++it){
-               (**it).movePos(2, 'W');
+                (**it).movePos(2, 'W');
+                if (char0.collides(**it)) {
+                    cout << "collided with laser" << endl;
+                }
             }
             accumulator -= deltaTime;
         }
