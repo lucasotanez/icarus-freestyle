@@ -209,31 +209,31 @@ int main(int argc, char* args[])
             //cout << playerSpeed << endl;
             //if (char0.collides(catBed)) cout << "collision detected" << endl;
 
-            if (spacePressed){
-                if (playerSpeed < 3.5) {
-                    playerSpeed += 0.3;
-                }
-                else playerSpeed = 3.5;
-            }
-            else {
-                if (playerSpeed > -3.5) {
-                    playerSpeed -= 0.15;
-                }
-                else playerSpeed = -3.5;
-            }
-
             //cout << (char0.getPos().y) << " | " << (char0.getPos().y) << endl;
             
             float next_y = char0.getPos().y + playerSpeed;
 
-            char0.movePos(playerSpeed, 'N');
+            char0.movePos(0, playerSpeed);
             for (deque<Entity*>::iterator it = obstacles.begin(); it != obstacles.end(); ++it){
-                (**it).movePos(2, 'W');
+                (**it).movePos(-2, 0);
                 if (char0.collides(**it)) {
                     cout << "collided with laser" << endl;
                 }
             }
             accumulator -= deltaTime;
+        }
+
+        if (spacePressed){
+            if (playerSpeed < 3.5) {
+                playerSpeed += 0.3;
+            }
+            else playerSpeed = 3.5;
+        }
+        else {
+            if (playerSpeed > -3.5) {
+                playerSpeed -= 0.15;
+            }
+            else playerSpeed = -3.5;
         }
 
         if (utils::timeInSeconds() - laserTime >= 2) {

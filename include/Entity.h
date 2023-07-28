@@ -5,6 +5,11 @@
 #include "Math.h"
 #include "Animations.h"
 
+struct Hitbox {
+    Hitbox(uint8_t x, uint8_t y) : marginX(x), marginY(y) {};
+    uint8_t marginX, marginY;
+};
+
 class Entity{
     public:
         Entity(Vector2f p_pos, SDL_Texture* p_tex, int width, int height);
@@ -13,7 +18,7 @@ class Entity{
         SDL_Texture* getTex();
         SDL_Rect getCurrFrame();
 
-        virtual void movePos(float speed, char dir) = 0;
+        virtual void movePos(float speedX, float speedY) = 0;
         virtual void playAnimation(Animation*, float timestamp, float frameLength) = 0;
         void changeTex(SDL_Texture* newTex);
 
@@ -21,7 +26,7 @@ class Entity{
     protected:
         Vector2f pos; // top left corner
         SDL_Rect currentFrame;
-        SDL_Rect hitbox;
+        Hitbox hitbox;
         SDL_Texture* tex;
 
 };

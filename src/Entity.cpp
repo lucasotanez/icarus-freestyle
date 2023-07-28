@@ -1,14 +1,13 @@
 #include "Entity.h"
 
 Entity::Entity(Vector2f p_pos, SDL_Texture* p_tex, int width, int height)
-    : pos(p_pos), tex(p_tex)
+    : pos(p_pos), tex(p_tex) , hitbox(4, 8)
 {
     currentFrame.x = 0;
     currentFrame.y = 0;
     currentFrame.w = width/*32*/;
     currentFrame.h = height/*32*/;
 
-    
 }
 
 Vector2f& Entity::getPos(){
@@ -30,13 +29,19 @@ void Entity::changeTex(SDL_Texture* newTex){
 
 bool Entity::collides(Entity& ent){
 
+    int thisBufH, thisBufW, entBufH, entBufW;
+    thisBufH = this->currentFrame.h / this->hitbox.marginY;
+    thisBufW = this->currentFrame.w / this->hitbox.marginX;
+    entBufH = ent.currentFrame.h / ent.hitbox.marginY;
+    entBufW = ent.currentFrame.w / ent.hitbox.marginX;
+
     // if one entity is to the right of the other
-    if (ent.pos.x + ent.currentFrame.w < this->pos.x) return false;
-    if (this->pos.x + this->currentFrame.w < ent.pos.x) return false;
+    if (ent.pos.x + ent.currentFrame.w - entBufW < this->pos.x + thisBufW) return false;
+    if (this->pos.x + this->currentFrame.w - thisBufW < ent.pos.x + entBufW) return false;
 
     //if one entity is below the other
-    if (ent.pos.y + ent.currentFrame.h < this->pos.y) return false;
-    if (this->pos.y + this->currentFrame.h < ent.pos.y) return false;
+    if (ent.pos.y + ent.currentFrame.h - entBufH < this->pos.y + thisBufH) return false;
+    if (this->pos.y + this->currentFrame.h - thisBufH < ent.pos.y + entBufH) return false;
 
     // else...
     return true;

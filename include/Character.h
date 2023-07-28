@@ -8,7 +8,7 @@ class Character : public Entity{
     public:
         Character(Vector2f p_pos, SDL_Texture* p_tex, int w, int h, 
                 Animation& walkR, Animation& walkL);
-        void movePos(float speed, char dir);
+        void movePos(float speedX, float speedY);
         void setPos(int x, int y);
         void setPosX(int x);
         void setPosY(int y);
