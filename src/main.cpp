@@ -37,8 +37,11 @@ int main(int argc, char* args[])
     SDL_Texture* walkLeft1 = window.loadTexture("res/img/charLeftWalk1.png");
     SDL_Texture* walkLeft2 = window.loadTexture("res/img/charLeftWalk2.png");
 
-    SDL_Texture* laserX1 = window.loadTexture("res/img/laserHorizontal1.png");
-    SDL_Texture* laserY1 = window.loadTexture("res/img/laserVertical1.png");
+    static SDL_Texture* laserX1 = window.loadTexture("res/img/laserHorizontal1.png");
+    SDL_Texture* laserX2 = window.loadTexture("res/img/laserHorizontal2.png");
+    SDL_Texture* laserX3 = window.loadTexture("res/img/laserHorizontal3.png");
+
+    static SDL_Texture* laserY1 = window.loadTexture("res/img/laserVertical1.png");
     SDL_Texture* laserY2 = window.loadTexture("res/img/laserVertical2.png");
     SDL_Texture* laserY3 = window.loadTexture("res/img/laserVertical3.png");
 
@@ -59,22 +62,27 @@ int main(int argc, char* args[])
     walkLeftAnim.addFrame(walkLeft2);
     //walk left animation initialized
 
-    Animation laserStaticY;
-    laserStaticY.addFrame(laserY1);
-    laserStaticY.addFrame(laserY2);
-    laserStaticY.addFrame(laserY3);
+    static Animation laserIdleY;
+    laserIdleY.addFrame(laserY1);
+    laserIdleY.addFrame(laserY2);
+    laserIdleY.addFrame(laserY3);
+
+    static Animation laserIdleX;
+    laserIdleX.addFrame(laserX1);
+    laserIdleX.addFrame(laserX2);
+    laserIdleX.addFrame(laserX3);
 
     //END ANIMATIONS
     //===============================================================================
 
-    Character char0(Vector2f(20, height/scaleF/2), charRight, 64, 64, walkRightAnim, walkLeftAnim);
+    Character char0(Vector2f(20, height/scaleF/2), charRight, 64, 64);
 
 
     //SERIALIZE ENTITIES HERE (for rendering)
     //=======================
     //first item in list is rendered first (behind all other items)
     vector<Entity*> entities = {&char0};
-    deque<Entity*> obstacles = {};
+    deque<Character*> obstacles = {};
 
     //dynamic primitives
     vector<SDL_Rect*> primRects;
@@ -109,6 +117,7 @@ int main(int argc, char* args[])
     float currentTime = utils::timeInSeconds();
 
     float playerSpeed = -2.5;
+    float gameSpeed = -3;
 
     float spaceTime = utils::timeInSeconds();
     float upSpeed = 0;
@@ -119,6 +128,33 @@ int main(int argc, char* args[])
     bool inAir = false;
 
     time_t laserTime = utils::timeInSeconds();
+
+
+    class LaserVertical : public Character{
+        public:
+            LaserVertical(Vector2f p_pos)
+            : Character(p_pos, laserY1, 32, 128, Hitbox(4, 8), &laserIdleY)
+            {}
+    };
+
+    class LaserHorizontal : public Character {
+        public:
+            LaserHorizontal(Vector2f p_pos)
+            : Character(p_pos, laserX1, 128, 32, Hitbox(8, 4), &laserIdleX)
+            {}
+    };
+
+    class LaserNegativeSlope : public Character {
+        public:
+            // TODO: implement
+
+    };
+
+    class LaserPositiveSlope : public Character {
+        public:
+            // TODO: implement
+
+    };
 
     //game loooooooop
     //IF GAME IS TAKING A LOT OF CPU: comment out all console logs
@@ -214,8 +250,8 @@ int main(int argc, char* args[])
             float next_y = char0.getPos().y + playerSpeed;
 
             char0.movePos(0, playerSpeed);
-            for (deque<Entity*>::iterator it = obstacles.begin(); it != obstacles.end(); ++it){
-                (**it).movePos(-2, 0);
+            for (deque<Character*>::iterator it = obstacles.begin(); it != obstacles.end(); ++it){
+                (**it).movePos(gameSpeed, 0);
                 if (char0.collides(**it)) {
                     cout << "collided with laser" << endl;
                 }
@@ -225,22 +261,23 @@ int main(int argc, char* args[])
 
         if (spacePressed){
             if (playerSpeed < 3.5) {
-                playerSpeed += 0.3;
+                playerSpeed += 0.15;
             }
             else playerSpeed = 3.5;
         }
         else {
             if (playerSpeed > -3.5) {
-                playerSpeed -= 0.15;
+                playerSpeed -= 0.1;
             }
             else playerSpeed = -3.5;
         }
 
-        if (utils::timeInSeconds() - laserTime >= 2) {
-            Entity* newEnt = new Character(Vector2f(1000/scaleF, rand() % (height / scaleF)), laserY1, 32, 128, walkRightAnim, walkLeftAnim);
+        if (utils::timeInSeconds() - laserTime >= 1.5) {
+            int laserType = rand() % 2;
+            Character* newEnt = nullptr;
+            if (laserType == 0) newEnt = new LaserHorizontal(Vector2f((float)width/scaleF, rand() % (height / scaleF)));
+            else if (laserType == 1) newEnt = new LaserVertical(Vector2f((float)width/scaleF, rand() % (height / scaleF)));
             obstacles.push_back(newEnt);
-            cout << "new obstacles" << endl;
-            //window.loadRect(primRects, 1000, rand() % height, 180, 150);
             laserTime = utils::timeInSeconds();
         }
 
@@ -267,9 +304,9 @@ int main(int argc, char* args[])
         }
 
         bool passedObstacle = false;
-        for (deque<Entity*>::iterator it = obstacles.begin(); it != obstacles.end(); ++it){
-            if ((*it)->getPos().x < 0) passedObstacle = true;
-            (*it)->playAnimation(&laserStaticY, utils::timeInSeconds(), 0.1);
+        for (deque<Character*>::iterator it = obstacles.begin(); it != obstacles.end(); ++it){
+            if ((*it)->getPos().x + (*it)->getCurrFrame().w < 0) passedObstacle = true;
+            (*it)->playIdleAnim(utils::timeInSeconds(), 0.1);
             window.render(**it);
         }
         if (passedObstacle) {
@@ -291,4 +328,6 @@ int main(int argc, char* args[])
 
     return 0;
 
+
 }
+
