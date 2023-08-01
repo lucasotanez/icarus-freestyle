@@ -260,7 +260,7 @@ int main(int argc, char* args[])
                         dPressed = true;
                     }
                     if (event.key.keysym.sym == SDLK_s){
-                        sPressed = true;
+                        if (game.gameOver == true) game.restartRun(obstacles);
                     }
                     if (event.key.keysym.sym == SDLK_SPACE && char0.getPos().y >= 100){
                         spacePressed = true;
@@ -304,37 +304,39 @@ int main(int argc, char* args[])
             //cout << playerSpeed << endl;
             //if (char0.collides(catBed)) cout << "collision detected" << endl;
 
-            if (!game.gameOver) {
-                if (utils::timeInSeconds() - game.timeSinceSpeedIncrease > game.speedIncreaseDelay) {
-                    game.gameSpeed -= game.speedIncreaseAmt;
-                    game.timeSinceSpeedIncrease = utils::timeInSeconds();
-                }
-            }
 
-            char0.movePos(0, game.playerSpeed);
-            for (deque<Character*>::iterator it = obstacles.begin(); it != obstacles.end(); ++it){
-                (**it).movePos(game.gameSpeed, 0);
-                if ((*it)->collides(char0) && game.gameOver == false) {
-                    game.gameOver = true;
-                    cout << "collided with laser" << endl;
-                }
-            }
             accumulator -= deltaTime;
+        }
+
+        if (!game.gameOver) {
+            if (utils::timeInSeconds() - game.timeSinceSpeedIncrease > game.speedIncreaseDelay) {
+                game.gameSpeed -= game.speedIncreaseAmt;
+                game.timeSinceSpeedIncrease = utils::timeInSeconds();
+            }
+        }
+
+        char0.movePos(0, game.playerSpeed);
+        for (deque<Character*>::iterator it = obstacles.begin(); it != obstacles.end(); ++it){
+            (**it).movePos(game.gameSpeed, 0);
+            if ((*it)->collides(char0) && game.gameOver == false) {
+                game.gameOver = true;
+                cout << "collided with laser" << endl;
+            }
         }
 
         if (spacePressed){
             if (!game.gameOver) {
-                if (game.playerSpeed < 3.5) {
+                if (game.playerSpeed < 2.5) {
                     game.playerSpeed += 0.15;
                 }
-                else game.playerSpeed = 3.5;
+                else game.playerSpeed = 2.5;
             }
         }
         else {
-            if (game.playerSpeed > -3.5) {
+            if (game.playerSpeed > -2.5) {
                 game.playerSpeed -= 0.1;
             }
-            else game.playerSpeed = -3.5;
+            else game.playerSpeed = -2.5;
         }
 
         if (game.gameSpeed != 0){
@@ -351,9 +353,9 @@ int main(int argc, char* args[])
         }
 
         if (game.gameOver) {
+            spacePressed = false;
             if ( game.gameSpeed < 0 ) {
                 game.gameSpeed += game.slideFactor;
-                game.laserDelay += game.slideFactor;
             }
             if ( game.gameSpeed > 0 ) game.gameSpeed = 0;
         }
@@ -404,6 +406,5 @@ int main(int argc, char* args[])
     SDL_Quit();
 
     return 0;
-
 
 }

@@ -29,6 +29,7 @@ void Character::jump(){
     inAir = true;
 }
 
+
 void Character::playAnimation(Animation* anim, float timestamp, float frameLength){
     if (timestamp - lastAction >= frameLength /*animation speed*/){
         if (anim->step_ == anim->numFrames()-1){
