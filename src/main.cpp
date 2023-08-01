@@ -136,17 +136,19 @@ int main(int argc, char* args[])
 
     float playerSpeed = -2.5;
     float gameSpeed = -3;
+    float laserDelay = 1.5;
+    float slideFactor = 0.01;
 
-    float spaceTime = utils::timeInSeconds();
+    int speedIncreaseDelay = 25;
+    float speedIncreaseAmt = 0.2;
+    float timeSinceSpeedIncrease = utils::timeInSeconds();
     float upSpeed = 0;
 
     bool wPressed, sPressed, dPressed, aPressed, spacePressed, shiftPressed;
     wPressed = sPressed = dPressed = aPressed = spacePressed = shiftPressed = false;
-
-    bool inAir = false;
+    bool gameOver = false;
 
     time_t laserTime = utils::timeInSeconds();
-
 
     class LaserVertical : public Character{
         public:
@@ -282,7 +284,6 @@ int main(int argc, char* args[])
                     }
                     if (event.key.keysym.sym == SDLK_LSHIFT && shiftPressed == false){
                         shiftPressed = true;
-                        playerSpeed *= 2;
                     }
                 }
                 if (event.type == SDL_KEYUP){
@@ -307,7 +308,6 @@ int main(int argc, char* args[])
                     }
                     if (event.key.keysym.sym == SDLK_LSHIFT){
                         shiftPressed = false;	
-                        playerSpeed /= 2;
                     }
                 }
             }
@@ -315,14 +315,18 @@ int main(int argc, char* args[])
             //cout << playerSpeed << endl;
             //if (char0.collides(catBed)) cout << "collision detected" << endl;
 
-            //cout << (char0.getPos().y) << " | " << (char0.getPos().y) << endl;
-            
-            float next_y = char0.getPos().y + playerSpeed;
+            if (!gameOver) {
+                if (utils::timeInSeconds() - timeSinceSpeedIncrease > speedIncreaseDelay) {
+                    gameSpeed -= speedIncreaseAmt;
+                    timeSinceSpeedIncrease = utils::timeInSeconds();
+                }
+            }
 
             char0.movePos(0, playerSpeed);
             for (deque<Character*>::iterator it = obstacles.begin(); it != obstacles.end(); ++it){
                 (**it).movePos(gameSpeed, 0);
-                if ((*it)->collides(char0)) {
+                if ((*it)->collides(char0) && gameOver == false) {
+                    gameOver = true;
                     cout << "collided with laser" << endl;
                 }
             }
@@ -330,10 +334,12 @@ int main(int argc, char* args[])
         }
 
         if (spacePressed){
-            if (playerSpeed < 3.5) {
-                playerSpeed += 0.15;
+            if (!gameOver) {
+                if (playerSpeed < 3.5) {
+                    playerSpeed += 0.15;
+                }
+                else playerSpeed = 3.5;
             }
-            else playerSpeed = 3.5;
         }
         else {
             if (playerSpeed > -3.5) {
@@ -342,15 +348,25 @@ int main(int argc, char* args[])
             else playerSpeed = -3.5;
         }
 
-        if (utils::timeInSeconds() - laserTime >= 1.5) {
-            int laserType = rand() % 4;
-            Character* newEnt = nullptr;
-            if (laserType == 0) newEnt = new LaserHorizontal(Vector2f((float)width/scaleF, rand() % (height / scaleF - 80)));
-            else if (laserType == 1) newEnt = new LaserVertical(Vector2f((float)width/scaleF, rand() % (height / scaleF - 80)));
-            else if (laserType == 2) newEnt = new LaserNegativeSlope(Vector2f((float)width/scaleF, rand() % (height / scaleF - 80)));
-            else if (laserType == 3) newEnt = new LaserPositiveSlope(Vector2f((float)width/scaleF, rand() % (height / scaleF - 80)));
-            obstacles.push_back(newEnt);
-            laserTime = utils::timeInSeconds();
+        if (gameSpeed != 0){
+            if (utils::timeInSeconds() - laserTime >= laserDelay) {
+                int laserType = rand() % 4;
+                Character* newEnt = nullptr;
+                if (laserType == 0) newEnt = new LaserHorizontal(Vector2f((float)width/scaleF, rand() % (height / scaleF - 80)));
+                else if (laserType == 1) newEnt = new LaserVertical(Vector2f((float)width/scaleF, rand() % (height / scaleF - 80)));
+                else if (laserType == 2) newEnt = new LaserNegativeSlope(Vector2f((float)width/scaleF, rand() % (height / scaleF - 80)));
+                else if (laserType == 3) newEnt = new LaserPositiveSlope(Vector2f((float)width/scaleF, rand() % (height / scaleF - 80)));
+                obstacles.push_back(newEnt);
+                laserTime = utils::timeInSeconds();
+            }
+        }
+
+        if (gameOver) {
+            if ( gameSpeed < 0 ) {
+                gameSpeed += slideFactor;
+                laserDelay += slideFactor;
+            }
+            if ( gameSpeed > 0 ) gameSpeed = 0;
         }
 
         // bring out of bounds character back into scope BEFORE rendering:
@@ -402,4 +418,3 @@ int main(int argc, char* args[])
 
 
 }
-
