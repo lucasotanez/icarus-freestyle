@@ -8,6 +8,7 @@
 #include "Entity.h"
 #include "Utils.h"
 #include "Character.h"
+#include "Settings.h"
 
 using namespace std;
 
@@ -97,7 +98,7 @@ int main(int argc, char* args[])
 
 
     //SERIALIZE ENTITIES HERE (for rendering)
-    //=======================
+    //===============================================================================
     //first item in list is rendered first (behind all other items)
     vector<Entity*> entities = {&char0};
     deque<Character*> obstacles = {};
@@ -126,29 +127,17 @@ int main(int argc, char* args[])
 
     //=======================
 
-    bool gameRunning = true;
-
     SDL_Event event;
 
     const float deltaTime = 0.01;
     float accumulator = 0.0;
     float currentTime = utils::timeInSeconds();
 
-    float playerSpeed = -2.5;
-    float gameSpeed = -3;
-    float laserDelay = 1.5;
-    float slideFactor = 0.01;
-
-    int speedIncreaseDelay = 25;
-    float speedIncreaseAmt = 0.2;
-    float timeSinceSpeedIncrease = utils::timeInSeconds();
-    float upSpeed = 0;
-
     bool wPressed, sPressed, dPressed, aPressed, spacePressed, shiftPressed;
     wPressed = sPressed = dPressed = aPressed = spacePressed = shiftPressed = false;
     bool gameOver = false;
 
-    time_t laserTime = utils::timeInSeconds();
+    Settings game;
 
     class LaserVertical : public Character{
         public:
@@ -231,7 +220,7 @@ int main(int argc, char* args[])
     //game loooooooop
     //IF GAME IS TAKING A LOT OF CPU: comment out all console logs
 
-    while (gameRunning){
+    while (game.running){
 
         int startTicks = SDL_GetTicks(); //ticks at start of frame
 
@@ -248,12 +237,12 @@ int main(int argc, char* args[])
         {
             while (SDL_PollEvent(&event)){
                 if (event.type == SDL_QUIT){
-                    gameRunning = false;
+                    game.running = false;
                     cout << "Session time: [" << utils::timeInSeconds() << " seconds]" << endl;
                 }
                 if (event.type == SDL_KEYDOWN){
                     if (event.key.keysym.sym == SDLK_x){
-                        gameRunning = false;
+                        game.running = false;
                     }
                     if (event.key.keysym.sym == SDLK_w){
                         wPressed = true;
@@ -315,18 +304,18 @@ int main(int argc, char* args[])
             //cout << playerSpeed << endl;
             //if (char0.collides(catBed)) cout << "collision detected" << endl;
 
-            if (!gameOver) {
-                if (utils::timeInSeconds() - timeSinceSpeedIncrease > speedIncreaseDelay) {
-                    gameSpeed -= speedIncreaseAmt;
-                    timeSinceSpeedIncrease = utils::timeInSeconds();
+            if (!game.gameOver) {
+                if (utils::timeInSeconds() - game.timeSinceSpeedIncrease > game.speedIncreaseDelay) {
+                    game.gameSpeed -= game.speedIncreaseAmt;
+                    game.timeSinceSpeedIncrease = utils::timeInSeconds();
                 }
             }
 
-            char0.movePos(0, playerSpeed);
+            char0.movePos(0, game.playerSpeed);
             for (deque<Character*>::iterator it = obstacles.begin(); it != obstacles.end(); ++it){
-                (**it).movePos(gameSpeed, 0);
-                if ((*it)->collides(char0) && gameOver == false) {
-                    gameOver = true;
+                (**it).movePos(game.gameSpeed, 0);
+                if ((*it)->collides(char0) && game.gameOver == false) {
+                    game.gameOver = true;
                     cout << "collided with laser" << endl;
                 }
             }
@@ -334,22 +323,22 @@ int main(int argc, char* args[])
         }
 
         if (spacePressed){
-            if (!gameOver) {
-                if (playerSpeed < 3.5) {
-                    playerSpeed += 0.15;
+            if (!game.gameOver) {
+                if (game.playerSpeed < 3.5) {
+                    game.playerSpeed += 0.15;
                 }
-                else playerSpeed = 3.5;
+                else game.playerSpeed = 3.5;
             }
         }
         else {
-            if (playerSpeed > -3.5) {
-                playerSpeed -= 0.1;
+            if (game.playerSpeed > -3.5) {
+                game.playerSpeed -= 0.1;
             }
-            else playerSpeed = -3.5;
+            else game.playerSpeed = -3.5;
         }
 
-        if (gameSpeed != 0){
-            if (utils::timeInSeconds() - laserTime >= laserDelay) {
+        if (game.gameSpeed != 0){
+            if (utils::timeInSeconds() - game.laserTime >= game.laserDelay) {
                 int laserType = rand() % 4;
                 Character* newEnt = nullptr;
                 if (laserType == 0) newEnt = new LaserHorizontal(Vector2f((float)width/scaleF, rand() % (height / scaleF - 80)));
@@ -357,16 +346,16 @@ int main(int argc, char* args[])
                 else if (laserType == 2) newEnt = new LaserNegativeSlope(Vector2f((float)width/scaleF, rand() % (height / scaleF - 80)));
                 else if (laserType == 3) newEnt = new LaserPositiveSlope(Vector2f((float)width/scaleF, rand() % (height / scaleF - 80)));
                 obstacles.push_back(newEnt);
-                laserTime = utils::timeInSeconds();
+                game.laserTime = utils::timeInSeconds();
             }
         }
 
-        if (gameOver) {
-            if ( gameSpeed < 0 ) {
-                gameSpeed += slideFactor;
-                laserDelay += slideFactor;
+        if (game.gameOver) {
+            if ( game.gameSpeed < 0 ) {
+                game.gameSpeed += game.slideFactor;
+                game.laserDelay += game.slideFactor;
             }
-            if ( gameSpeed > 0 ) gameSpeed = 0;
+            if ( game.gameSpeed > 0 ) game.gameSpeed = 0;
         }
 
         // bring out of bounds character back into scope BEFORE rendering:
@@ -376,7 +365,7 @@ int main(int argc, char* args[])
 
         } else if (checkY < ((float)roof_y/scaleF)) {
             char0.setPosY(roof_y/scaleF);
-            playerSpeed = 0;
+            game.playerSpeed = 0;
         }
 
         const float alpha = accumulator / deltaTime; // %?
