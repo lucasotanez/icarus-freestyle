@@ -1,7 +1,7 @@
 DEBUG_DIR = bin/debug
 RELEASE_DIR = bin/release
 
-TITLE = Mrow
+TITLE = LaserMaze
 
 CXX = g++
 CPPFLAGS = -std=c++14 -m64 -g -Wall -I

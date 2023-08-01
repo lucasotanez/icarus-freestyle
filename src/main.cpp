@@ -45,6 +45,14 @@ int main(int argc, char* args[])
     SDL_Texture* laserY2 = window.loadTexture("res/img/laserVertical2.png");
     SDL_Texture* laserY3 = window.loadTexture("res/img/laserVertical3.png");
 
+    static SDL_Texture* laserNegS1 = window.loadTexture("res/img/laserNegSlope1.png");
+    SDL_Texture* laserNegS2 = window.loadTexture("res/img/laserNegSlope2.png");
+    SDL_Texture* laserNegS3 = window.loadTexture("res/img/laserNegSlope3.png");
+    
+    static SDL_Texture* laserPosS1 = window.loadTexture("res/img/laserPosSlope1.png");
+    SDL_Texture* laserPosS2 = window.loadTexture("res/img/laserPosSlope2.png");
+    SDL_Texture* laserPosS3 = window.loadTexture("res/img/laserPosSlope3.png");
+
 
     //END TEXTURES
     //===============================================================================
@@ -71,6 +79,16 @@ int main(int argc, char* args[])
     laserIdleX.addFrame(laserX1);
     laserIdleX.addFrame(laserX2);
     laserIdleX.addFrame(laserX3);
+    
+    static Animation laserIdleNS;
+    laserIdleNS.addFrame(laserNegS1);
+    laserIdleNS.addFrame(laserNegS2);
+    laserIdleNS.addFrame(laserNegS3);
+    
+    static Animation laserIdlePS;
+    laserIdlePS.addFrame(laserPosS1);
+    laserIdlePS.addFrame(laserPosS2);
+    laserIdlePS.addFrame(laserPosS3);
 
     //END ANIMATIONS
     //===============================================================================
@@ -146,13 +164,65 @@ int main(int argc, char* args[])
 
     class LaserNegativeSlope : public Character {
         public:
-            // TODO: implement
+            LaserNegativeSlope(Vector2f p_pos)
+            : Character(p_pos, laserNegS1, 128, 128, Hitbox(8, 8), &laserIdleNS)
+            {}
+
+            bool collides(const Entity &ent) const override {
+                //// hitbox dimensions should be square for this class of laser
+                if (ent.getHitbox().marginX != ent.getHitbox().marginY) return false;
+
+                // hitbox buffers
+                float entLeft = ent.getPos().x + ((float)ent.getCurrFrame().w/ent.getHitbox().marginX);
+                float entRight = ent.getPos().x + ent.getCurrFrame().w - ((float)ent.getCurrFrame().w/ent.getHitbox().marginX);
+                float entTop = ent.getPos().y + ((float)ent.getCurrFrame().h/ent.getHitbox().marginY);
+                float entBot = ent.getPos().y + ent.getCurrFrame().h - ((float)ent.getCurrFrame().h/ent.getHitbox().marginY);
+
+                float thisLeft = this->getPos().x + (float)this->getCurrFrame().w/this->getHitbox().marginX;
+                float thisRight = this->getPos().x + this->getCurrFrame().w - (float)this->getCurrFrame().w/this->getHitbox().marginX;
+                float thisBot = this->getPos().y + this->getCurrFrame().h - (float)this->getCurrFrame().h/this->getHitbox().marginY;
+                float thisTop = this->getPos().y + (float)this->getCurrFrame().h/this->getHitbox().marginY;
+
+                if (thisLeft > entRight || thisRight < entLeft) return false;
+                if (thisTop > entBot || thisBot < entTop) return false;
+                int vertScale = this->getCurrFrame().w - (this->getCurrFrame().w + thisLeft - entLeft);
+                int passingY = thisTop + vertScale;
+                if (passingY > entTop && passingY < entBot){
+                    return true;
+                } else return false;
+            }
 
     };
 
     class LaserPositiveSlope : public Character {
         public:
-            // TODO: implement
+            LaserPositiveSlope(Vector2f p_pos)
+            : Character(p_pos, laserPosS1, 128, 128, Hitbox(8, 8), &laserIdlePS)
+            {}
+
+            bool collides(const Entity &ent) const override {
+                //// hitbox dimensions should be square for this class of laser
+                if (ent.getHitbox().marginX != ent.getHitbox().marginY) return false;
+
+                // hitbox buffers
+                float entLeft = ent.getPos().x + ((float)ent.getCurrFrame().w/ent.getHitbox().marginX);
+                float entRight = ent.getPos().x + ent.getCurrFrame().w - ((float)ent.getCurrFrame().w/ent.getHitbox().marginX);
+                float entTop = ent.getPos().y + ((float)ent.getCurrFrame().h/ent.getHitbox().marginY);
+                float entBot = ent.getPos().y + ent.getCurrFrame().h - ((float)ent.getCurrFrame().h/ent.getHitbox().marginY);
+
+                float thisLeft = this->getPos().x + (float)this->getCurrFrame().w/this->getHitbox().marginX;
+                float thisRight = this->getPos().x + this->getCurrFrame().w - (float)this->getCurrFrame().w/this->getHitbox().marginX;
+                float thisBot = this->getPos().y + this->getCurrFrame().h - (float)this->getCurrFrame().h/this->getHitbox().marginY;
+                float thisTop = this->getPos().y + (float)this->getCurrFrame().h/this->getHitbox().marginY;
+
+                if (thisLeft > entRight || thisRight < entLeft) return false;
+                if (thisTop > entBot || thisBot < entTop) return false;
+                int vertScale = this->getCurrFrame().w - (this->getCurrFrame().w + thisLeft - entLeft);
+                int passingY = thisBot - vertScale;
+                if (passingY > entTop && passingY < entBot){
+                    return true;
+                } else return false;
+            }
 
     };
 
@@ -252,7 +322,7 @@ int main(int argc, char* args[])
             char0.movePos(0, playerSpeed);
             for (deque<Character*>::iterator it = obstacles.begin(); it != obstacles.end(); ++it){
                 (**it).movePos(gameSpeed, 0);
-                if (char0.collides(**it)) {
+                if ((*it)->collides(char0)) {
                     cout << "collided with laser" << endl;
                 }
             }
@@ -273,10 +343,12 @@ int main(int argc, char* args[])
         }
 
         if (utils::timeInSeconds() - laserTime >= 1.5) {
-            int laserType = rand() % 2;
+            int laserType = rand() % 4;
             Character* newEnt = nullptr;
-            if (laserType == 0) newEnt = new LaserHorizontal(Vector2f((float)width/scaleF, rand() % (height / scaleF)));
-            else if (laserType == 1) newEnt = new LaserVertical(Vector2f((float)width/scaleF, rand() % (height / scaleF)));
+            if (laserType == 0) newEnt = new LaserHorizontal(Vector2f((float)width/scaleF, rand() % (height / scaleF - 80)));
+            else if (laserType == 1) newEnt = new LaserVertical(Vector2f((float)width/scaleF, rand() % (height / scaleF - 80)));
+            else if (laserType == 2) newEnt = new LaserNegativeSlope(Vector2f((float)width/scaleF, rand() % (height / scaleF - 80)));
+            else if (laserType == 3) newEnt = new LaserPositiveSlope(Vector2f((float)width/scaleF, rand() % (height / scaleF - 80)));
             obstacles.push_back(newEnt);
             laserTime = utils::timeInSeconds();
         }

@@ -7,7 +7,7 @@
 
 struct Hitbox {
     Hitbox(uint8_t x, uint8_t y) : marginX(x), marginY(y) {};
-    uint8_t marginX, marginY;
+    int8_t marginX, marginY;
 };
 
 class Entity{
