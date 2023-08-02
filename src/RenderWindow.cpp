@@ -32,6 +32,19 @@ SDL_Texture* RenderWindow::loadTexture(const char* p_filePath){
     return texture;
 }
 
+SDL_Texture* RenderWindow::loadTextureFromString(const char* message, int size, SDL_Color color){
+    TTF_Font* font = TTF_OpenFont( "res/fonts/slkscr.ttf", 28 );
+    if ( font == NULL ){
+        std::cout << "Failed to load font: " << TTF_GetError() << std::endl;
+    }
+    SDL_Surface* messageSurface = TTF_RenderText_Solid(font, message, color);
+    if ( messageSurface == NULL ) {
+        std::cout << "Unable to render surface" << TTF_GetError() << std::endl;
+    }
+    SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, messageSurface);
+    return texture;
+}
+
 int RenderWindow::getRefreshRate(){
     int displayIndex = SDL_GetWindowDisplayIndex(window);
 
