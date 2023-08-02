@@ -15,6 +15,7 @@ class Animation
         uint8_t numFrames();
         //uint8_t getStep();
         uint8_t step_;
+
     private:
         //FRAMES: Art needed (frames loaded in main.cpp)
         //==================================================================

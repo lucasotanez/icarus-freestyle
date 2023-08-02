@@ -89,23 +89,23 @@ int main(int argc, char* args[])
     //===============================================================================
 
     Character char0(Vector2f(20, game.height/scaleF/2), &charRight);
-    Character screenMessage(Vector2f(50, 50), &testText);
+    Entity screenMessage(Vector2f(50, 50), &testText);
 
 
     //SERIALIZE ENTITIES HERE (for rendering)
     //===============================================================================
     //first item in list is rendered first (behind all other items)
     vector<Entity*> entities = {&char0, &screenMessage};
-    deque<Character*> obstacles = {};
+    deque<Entity*> obstacles = {};
 
     //dynamic primitives
     vector<SDL_Rect*> primRects;
 
-    SDL_Rect floor;
-    floor.x = 0;
-    floor.y = 0;
-    floor.w = game.width;
-    floor.h = game.height;
+    SDL_Rect bgVoid;
+    bgVoid.x = 0;
+    bgVoid.y = 0;
+    bgVoid.w = game.width;
+    bgVoid.h = game.height;
 
     int roof_y, playHeight_y;
     roof_y = 20 * scaleF;
@@ -118,7 +118,7 @@ int main(int argc, char* args[])
     playSpace.h = playHeight_y;
 
     //constant primitives
-    const vector<SDL_Rect*> constPrimRects = {&floor, &playSpace};
+    const vector<SDL_Rect*> constPrimRects = {&bgVoid, &playSpace};
 
     //=======================
 
@@ -131,43 +131,43 @@ int main(int argc, char* args[])
     bool wPressed, sPressed, dPressed, aPressed, spacePressed, shiftPressed;
     wPressed = sPressed = dPressed = aPressed = spacePressed = shiftPressed = false;
 
-    class LaserVertical : public Character{
+    class LaserVertical : public Entity {
         public:
             LaserVertical(Vector2f p_pos)
             //: Character(p_pos, laserY1, 32, 128, Hitbox(4, 8), &laserIdleY)
-            : Character(p_pos, &laserY1, Hitbox(4, 8), &laserIdleY)
+            : Entity(p_pos, &laserY1, Hitbox(4, 8), &laserIdleY)
             {}
     };
 
-    class LaserHorizontal : public Character {
+    class LaserHorizontal : public Entity {
         public:
             LaserHorizontal(Vector2f p_pos)
             //: Character(p_pos, laserX1, 128, 32, Hitbox(8, 4), &laserIdleX)
-            : Character(p_pos, &laserX1, Hitbox(8, 4), &laserIdleX)
+            : Entity(p_pos, &laserX1, Hitbox(8, 4), &laserIdleX)
             {}
     };
 
-    class LaserNegativeSlope : public Character {
+    class LaserNegativeSlope : public Entity {
         public:
             LaserNegativeSlope(Vector2f p_pos)
             //: Character(p_pos, laserNegS1, 128, 128, Hitbox(8, 8), &laserIdleNS)
-            : Character(p_pos, &laserNegS1, Hitbox(8, 8), &laserIdleNS)
+            : Entity(p_pos, &laserNegS1, Hitbox(8, 8), &laserIdleNS)
             {}
 
             bool collides(const Entity &ent) const override {
                 //// hitbox dimensions should be square for this class of laser
-                if (ent.getHitbox().marginX != ent.getHitbox().marginY) return false;
+                if (ent.getHitbox()->marginX != ent.getHitbox()->marginY) return false;
 
                 // hitbox buffers
-                float entLeft = ent.getPos().x + ((float)ent.getCurrFrame().w/ent.getHitbox().marginX);
-                float entRight = ent.getPos().x + ent.getCurrFrame().w - ((float)ent.getCurrFrame().w/ent.getHitbox().marginX);
-                float entTop = ent.getPos().y + ((float)ent.getCurrFrame().h/ent.getHitbox().marginY);
-                float entBot = ent.getPos().y + ent.getCurrFrame().h - ((float)ent.getCurrFrame().h/ent.getHitbox().marginY);
+                float entLeft = ent.getPos().x + ((float)ent.getCurrFrame().w/ent.getHitbox()->marginX);
+                float entRight = ent.getPos().x + ent.getCurrFrame().w - ((float)ent.getCurrFrame().w/ent.getHitbox()->marginX);
+                float entTop = ent.getPos().y + ((float)ent.getCurrFrame().h/ent.getHitbox()->marginY);
+                float entBot = ent.getPos().y + ent.getCurrFrame().h - ((float)ent.getCurrFrame().h/ent.getHitbox()->marginY);
 
-                float thisLeft = this->getPos().x + (float)this->getCurrFrame().w/this->getHitbox().marginX;
-                float thisRight = this->getPos().x + this->getCurrFrame().w - (float)this->getCurrFrame().w/this->getHitbox().marginX;
-                float thisBot = this->getPos().y + this->getCurrFrame().h - (float)this->getCurrFrame().h/this->getHitbox().marginY;
-                float thisTop = this->getPos().y + (float)this->getCurrFrame().h/this->getHitbox().marginY;
+                float thisLeft = this->getPos().x + (float)this->getCurrFrame().w/this->getHitbox()->marginX;
+                float thisRight = this->getPos().x + this->getCurrFrame().w - (float)this->getCurrFrame().w/this->getHitbox()->marginX;
+                float thisBot = this->getPos().y + this->getCurrFrame().h - (float)this->getCurrFrame().h/this->getHitbox()->marginY;
+                float thisTop = this->getPos().y + (float)this->getCurrFrame().h/this->getHitbox()->marginY;
 
                 if (thisLeft > entRight || thisRight < entLeft) return false;
                 if (thisTop > entBot || thisBot < entTop) return false;
@@ -180,27 +180,27 @@ int main(int argc, char* args[])
 
     };
 
-    class LaserPositiveSlope : public Character {
+    class LaserPositiveSlope : public Entity {
         public:
             LaserPositiveSlope(Vector2f p_pos)
             //: Character(p_pos, laserPosS1, 128, 128, Hitbox(8, 8), &laserIdlePS)
-            : Character(p_pos, &laserPosS1, Hitbox(8, 8), &laserIdlePS)
+            : Entity(p_pos, &laserPosS1, Hitbox(8, 8), &laserIdlePS)
             {}
 
             bool collides(const Entity &ent) const override {
                 //// hitbox dimensions should be square for this class of laser
-                if (ent.getHitbox().marginX != ent.getHitbox().marginY) return false;
+                if (ent.getHitbox()->marginX != ent.getHitbox()->marginY) return false;
 
                 // hitbox buffers
-                float entLeft = ent.getPos().x + ((float)ent.getCurrFrame().w/ent.getHitbox().marginX);
-                float entRight = ent.getPos().x + ent.getCurrFrame().w - ((float)ent.getCurrFrame().w/ent.getHitbox().marginX);
-                float entTop = ent.getPos().y + ((float)ent.getCurrFrame().h/ent.getHitbox().marginY);
-                float entBot = ent.getPos().y + ent.getCurrFrame().h - ((float)ent.getCurrFrame().h/ent.getHitbox().marginY);
+                float entLeft = ent.getPos().x + ((float)ent.getCurrFrame().w/ent.getHitbox()->marginX);
+                float entRight = ent.getPos().x + ent.getCurrFrame().w - ((float)ent.getCurrFrame().w/ent.getHitbox()->marginX);
+                float entTop = ent.getPos().y + ((float)ent.getCurrFrame().h/ent.getHitbox()->marginY);
+                float entBot = ent.getPos().y + ent.getCurrFrame().h - ((float)ent.getCurrFrame().h/ent.getHitbox()->marginY);
 
-                float thisLeft = this->getPos().x + (float)this->getCurrFrame().w/this->getHitbox().marginX;
-                float thisRight = this->getPos().x + this->getCurrFrame().w - (float)this->getCurrFrame().w/this->getHitbox().marginX;
-                float thisBot = this->getPos().y + this->getCurrFrame().h - (float)this->getCurrFrame().h/this->getHitbox().marginY;
-                float thisTop = this->getPos().y + (float)this->getCurrFrame().h/this->getHitbox().marginY;
+                float thisLeft = this->getPos().x + (float)this->getCurrFrame().w/this->getHitbox()->marginX;
+                float thisRight = this->getPos().x + this->getCurrFrame().w - (float)this->getCurrFrame().w/this->getHitbox()->marginX;
+                float thisBot = this->getPos().y + this->getCurrFrame().h - (float)this->getCurrFrame().h/this->getHitbox()->marginY;
+                float thisTop = this->getPos().y + (float)this->getCurrFrame().h/this->getHitbox()->marginY;
 
                 if (thisLeft > entRight || thisRight < entLeft) return false;
                 if (thisTop > entBot || thisBot < entTop) return false;
@@ -301,8 +301,8 @@ int main(int argc, char* args[])
             }
         }
 
-        char0.movePos(0, game.playerSpeed);
-        for (deque<Character*>::iterator it = obstacles.begin(); it != obstacles.end(); ++it){
+        char0.movePos(game.playerSpeed);
+        for (deque<Entity*>::iterator it = obstacles.begin(); it != obstacles.end(); ++it){
             (**it).movePos(game.gameSpeed, 0);
             if ((*it)->collides(char0) && game.gameOver == false) {
                 game.gameOver = true;
@@ -328,7 +328,7 @@ int main(int argc, char* args[])
         if (game.gameSpeed != 0){
             if (utils::timeInSeconds() - game.laserTime >= game.laserDelay) {
                 int laserType = rand() % 4;
-                Character* newEnt = nullptr;
+                Entity* newEnt = nullptr;
                 if (laserType == 0) newEnt = new LaserHorizontal(Vector2f((float)game.width/scaleF, rand() % (game.height / scaleF - 80)));
                 else if (laserType == 1) newEnt = new LaserVertical(Vector2f((float)game.width/scaleF, rand() % (game.height / scaleF - 80)));
                 else if (laserType == 2) newEnt = new LaserNegativeSlope(Vector2f((float)game.width/scaleF, rand() % (game.height / scaleF - 80)));
@@ -369,7 +369,8 @@ int main(int argc, char* args[])
         }
 
         bool passedObstacle = false;
-        for (deque<Character*>::iterator it = obstacles.begin(); it != obstacles.end(); ++it){
+        std::cout << obstacles.size() << std::endl;
+        for (deque<Entity*>::iterator it = obstacles.begin(); it != obstacles.end(); ++it){
             if ((*it)->getPos().x + (*it)->getCurrFrame().w < 0) passedObstacle = true;
             (*it)->playIdleAnim(utils::timeInSeconds(), 0.1);
             window.render(**it);

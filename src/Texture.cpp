@@ -2,8 +2,6 @@
 #include <iostream>
 #include "Game.h"
 
-int Texture::_scaleUp = 2;
-
 Texture::Texture()
 : _texture(NULL), _width(0), _height(0)
 {}
@@ -28,8 +26,8 @@ bool Texture::loadFromFile(const char* path )
             std::cout << "Unable to create texture: " << SDL_GetError() << std::endl;
         }
         else {
-            _width = loadedSurface->w * _scaleUp;
-            _height = loadedSurface->h * _scaleUp;
+            _width = loadedSurface->w;
+            _height = loadedSurface->h;
         }
 
         SDL_FreeSurface( loadedSurface );
@@ -41,8 +39,6 @@ bool Texture::loadFromFile(const char* path )
 
 //TODO: load textures into renderer
 //TODO: delete will-be-redundant code in main loop
-//TODO: get access to window renderer in a better way (constructor to data member?) 
-//TODO: change entity constructor to not accept dimensions, as dimensions are instead
 //      data members of this new "Texture" class.
 
 bool Texture::loadFromText(const char* text, SDL_Color color, int size)
@@ -59,8 +55,8 @@ bool Texture::loadFromText(const char* text, SDL_Color color, int size)
         return false;
     }
     SDL_Texture* texture = SDL_CreateTextureFromSurface(window.getRenderer(), messageSurface);
-    _width = messageSurface->w * _scaleUp;
-    _height = messageSurface->h * _scaleUp;
+    _width = messageSurface->w;
+    _height = messageSurface->h;
     _texture = texture;
     return _texture != NULL;
 }

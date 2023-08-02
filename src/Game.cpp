@@ -1,7 +1,7 @@
 #include "Game.h"
 #include "RenderWindow.h"
 
-void Settings::restartRun(std::deque<Character*>& obstacles) {
+void Settings::restartRun(std::deque<Entity*>& obstacles) {
     std::cout << "Restarting" << std::endl;
     while (!obstacles.empty()) {
         Entity* freeThis = obstacles.front();
@@ -16,5 +16,6 @@ void Settings::restartRun(std::deque<Character*>& obstacles) {
 }
 
 // initialize game globals here
+
 Settings game;
 RenderWindow window = RenderWindow("Working Title", game.width, game.height);

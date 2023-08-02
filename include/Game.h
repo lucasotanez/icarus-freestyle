@@ -24,13 +24,13 @@ struct Settings {
         int width = 1480;
         int height = 920;
 
-        void restartRun(std::deque<Character*>& obstacles); 
+        void restartRun(std::deque<Entity*>& obstacles); 
 
     private:
 
 };
 
-// include game globals
+// include game globals ( initialized in main.cpp )
 extern Settings game;
 extern RenderWindow window;
 

@@ -25,7 +25,6 @@ class Texture {
         inline void changeTex(SDL_Texture* newTex) { _texture = newTex; };
 
     private:
-        static int _scaleUp;
         SDL_Texture* _texture;
 
         int _width;
