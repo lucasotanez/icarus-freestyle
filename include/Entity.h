@@ -30,6 +30,7 @@ class Entity{
         Vector2f pos; // top left corner
         SDL_Rect currentFrame;
         Hitbox hitbox;
+        //SDL_Texture* tex;
         SDL_Texture* tex;
         Animation* idleAnim;
 

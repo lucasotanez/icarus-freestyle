@@ -7,7 +7,6 @@ Entity::Entity(Vector2f p_pos, SDL_Texture* p_tex, int width, int height, Hitbox
     currentFrame.y = 0;
     currentFrame.w = width/*32*/;
     currentFrame.h = height/*32*/;
-
 }
 
 const Vector2f& Entity::getPos() const{

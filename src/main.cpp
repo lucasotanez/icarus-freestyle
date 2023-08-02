@@ -1,14 +1,15 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 #include <iostream>
 #include <vector>
 #include <deque>
 #include <cstdlib>
-#include "RenderWindow.h"
 #include "Entity.h"
 #include "Utils.h"
 #include "Character.h"
-#include "Settings.h"
+#include "Game.h"
+#include "Texture.h"
 
 using namespace std;
 
@@ -17,11 +18,7 @@ int main(int argc, char* args[])
     // returns zero on success else non-zero
     if (SDL_Init(SDL_INIT_VIDEO) != 0) cout << "SDL_Init FAILED: " << SDL_GetError() << endl;
     if (!(IMG_Init(IMG_INIT_PNG))) cout << "IMG_Init FAILED: " << SDL_GetError() << endl;
-
-    const int width = 1480;
-    const int height = 920;
-
-    RenderWindow window("Working Title", width, height);
+    if (TTF_Init() < 0) cout << TTF_GetError() << endl;
 
     cout << "Refresh Rate: " << window.getRefreshRate() << endl;
 
@@ -54,6 +51,24 @@ int main(int argc, char* args[])
     SDL_Texture* laserPosS2 = window.loadTexture("res/img/laserPosSlope2.png");
     SDL_Texture* laserPosS3 = window.loadTexture("res/img/laserPosSlope3.png");
 
+    SDL_Color red = { 255, 0, 0 };
+    SDL_Texture* testText = window.loadTextureFromString("Game Title", 24, red);
+
+    //static Texture laserX1; laserX1.loadFromFile("res/img/laserHorizontal1.png");
+    //Texture laserX2; laserX1.loadFromFile("res/img/laserHorizontal2.png");
+    //Texture laserX3; laserX1.loadFromFile("res/img/laserHorizontal3.png");
+
+    //static Texture laserY1; laserX1.loadFromFile("res/img/laserVertical1.png");
+    //Texture laserY2; laserX1.loadFromFile("res/img/laserVertical2.png");
+    //Texture laserY3; laserX1.loadFromFile("res/img/laserVertical3.png");
+
+    //static Texture laserNegS1; laserX1.loadFromFile("res/img/laserNegSlope1.png");
+    //Texture laserNegS2; laserX1.loadFromFile("res/img/laserNegSlope2.png");
+    //Texture laserNegS3; laserX1.loadFromFile("res/img/laserNegSlope3.png");
+
+    //static Texture laserPosS1; laserX1.loadFromFile("res/img/laserPosSlope1.png");
+    //Texture laserPosS2; laserX1.loadFromFile("res/img/laserPosSlope2.png");
+    //Texture laserPosS3; laserX1.loadFromFile("res/img/laserPosSlope3.png");
 
     //END TEXTURES
     //===============================================================================
@@ -63,12 +78,12 @@ int main(int argc, char* args[])
     //1. Declare animation
     //2. Add frames
 
-    Animation walkRightAnim;
-    walkRightAnim.addFrame(walkRight1);
-    walkRightAnim.addFrame(walkRight2);
+    //Animation walkRightAnim;
+    //walkRightAnim.addFrame(walkRight1);
+    //walkRightAnim.addFrame(walkRight2);
     //walk right animation initialized
-    Animation walkLeftAnim; walkLeftAnim.addFrame(walkLeft1);
-    walkLeftAnim.addFrame(walkLeft2);
+    //Animation walkLeftAnim; walkLeftAnim.addFrame(walkLeft1);
+    //walkLeftAnim.addFrame(walkLeft2);
     //walk left animation initialized
 
     static Animation laserIdleY;
@@ -94,13 +109,14 @@ int main(int argc, char* args[])
     //END ANIMATIONS
     //===============================================================================
 
-    Character char0(Vector2f(20, height/scaleF/2), charRight, 64, 64);
+    Character char0(Vector2f(20, game.height/scaleF/2), charRight, 64, 64);
+    Character screenMessage(Vector2f(50, 50), testText, 171, 24);
 
 
     //SERIALIZE ENTITIES HERE (for rendering)
     //===============================================================================
     //first item in list is rendered first (behind all other items)
-    vector<Entity*> entities = {&char0};
+    vector<Entity*> entities = {&char0, &screenMessage};
     deque<Character*> obstacles = {};
 
     //dynamic primitives
@@ -109,17 +125,17 @@ int main(int argc, char* args[])
     SDL_Rect floor;
     floor.x = 0;
     floor.y = 0;
-    floor.w = width;
-    floor.h = height;
+    floor.w = game.width;
+    floor.h = game.height;
 
     int roof_y, playHeight_y;
     roof_y = 20 * scaleF;
-    playHeight_y = height - 2 * (20 * scaleF);
+    playHeight_y = game.height - 2 * (20 * scaleF);
 
     SDL_Rect playSpace;
     playSpace.x = 0;
     playSpace.y = roof_y;
-    playSpace.w = width;
+    playSpace.w = game.width;
     playSpace.h = playHeight_y;
 
     //constant primitives
@@ -136,8 +152,6 @@ int main(int argc, char* args[])
     bool wPressed, sPressed, dPressed, aPressed, spacePressed, shiftPressed;
     wPressed = sPressed = dPressed = aPressed = spacePressed = shiftPressed = false;
     bool gameOver = false;
-
-    Settings game;
 
     class LaserVertical : public Character{
         public:
@@ -248,15 +262,9 @@ int main(int argc, char* args[])
                         wPressed = true;
                     }
                     if (event.key.keysym.sym == SDLK_a){
-                        if (aPressed == false) {
-                            char0.changeTex(charLeft);
-                        }
                         aPressed = true;
                     }
                     if (event.key.keysym.sym == SDLK_d){
-                        if (dPressed == false) {
-                            char0.changeTex(charRight);
-                        }
                         dPressed = true;
                     }
                     if (event.key.keysym.sym == SDLK_s){
@@ -280,16 +288,12 @@ int main(int argc, char* args[])
                         wPressed = false;
                     }
                     if (event.key.keysym.sym == SDLK_a){
-                        if (dPressed == true) char0.changeTex(charRight);
-                        else char0.changeTex(charLeft);
                         aPressed = false;
                     }
                     if (event.key.keysym.sym == SDLK_s){
                         sPressed = false;
                     }
                     if (event.key.keysym.sym == SDLK_d){
-                        if (aPressed == true) char0.changeTex(charLeft);
-                        else char0.changeTex(charRight);
                         dPressed = false;
                     }
                     if (event.key.keysym.sym == SDLK_SPACE){
@@ -343,10 +347,10 @@ int main(int argc, char* args[])
             if (utils::timeInSeconds() - game.laserTime >= game.laserDelay) {
                 int laserType = rand() % 4;
                 Character* newEnt = nullptr;
-                if (laserType == 0) newEnt = new LaserHorizontal(Vector2f((float)width/scaleF, rand() % (height / scaleF - 80)));
-                else if (laserType == 1) newEnt = new LaserVertical(Vector2f((float)width/scaleF, rand() % (height / scaleF - 80)));
-                else if (laserType == 2) newEnt = new LaserNegativeSlope(Vector2f((float)width/scaleF, rand() % (height / scaleF - 80)));
-                else if (laserType == 3) newEnt = new LaserPositiveSlope(Vector2f((float)width/scaleF, rand() % (height / scaleF - 80)));
+                if (laserType == 0) newEnt = new LaserHorizontal(Vector2f((float)game.width/scaleF, rand() % (game.height / scaleF - 80)));
+                else if (laserType == 1) newEnt = new LaserVertical(Vector2f((float)game.width/scaleF, rand() % (game.height / scaleF - 80)));
+                else if (laserType == 2) newEnt = new LaserNegativeSlope(Vector2f((float)game.width/scaleF, rand() % (game.height / scaleF - 80)));
+                else if (laserType == 3) newEnt = new LaserPositiveSlope(Vector2f((float)game.width/scaleF, rand() % (game.height / scaleF - 80)));
                 obstacles.push_back(newEnt);
                 game.laserTime = utils::timeInSeconds();
             }

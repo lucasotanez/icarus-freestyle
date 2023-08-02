@@ -11,10 +11,10 @@ debug: $(DEBUG_DIR)/$(TITLE)
 release: $(RELEASE_DIR)/$(TITLE)
 
 $(DEBUG_DIR)/$(TITLE): src/*.cpp 
-	$(CXX) -c $^ -O3 $(CPPFLAGS) include && $(CXX) *.o -o $(DEBUG_DIR)/$(TITLE) -lSDL2main -lSDL2 -lSDL2_image && ./$(DEBUG_DIR)/$(TITLE)
+	$(CXX) -c $^ -O3 $(CPPFLAGS) include && $(CXX) *.o -o $(DEBUG_DIR)/$(TITLE) -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf && ./$(DEBUG_DIR)/$(TITLE)
 
 $(RELEASE_DIR)/$(TITLE): src/*.cpp 
-	$(CXX) -c $^ -O3 $(CPPFLAGS) include && $(CXX) *.o -o $(RELEASE_DIR)/$(TITLE) -s -lSDL2main -lSDL2 -lSDL2_image && ./$(RELEASE_DIR)/$(TITLE)
+	$(CXX) -c $^ -O3 $(CPPFLAGS) include && $(CXX) *.o -o $(RELEASE_DIR)/$(TITLE) -s -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf && ./$(RELEASE_DIR)/$(TITLE)
 
 .PHONY: clean clean_release run run_release
 clean:

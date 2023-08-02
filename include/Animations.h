@@ -9,6 +9,7 @@ class Animation
     public:
         Animation();
         void addFrame(SDL_Texture* newF);
+        //SDL_Texture* operator[](int idx);
         SDL_Texture* operator[](int idx);
         uint8_t numFrames();
         //uint8_t getStep();
