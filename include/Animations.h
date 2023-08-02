@@ -3,14 +3,15 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <vector>
+#include "Texture.h"
 
 class Animation
 {
     public:
         Animation();
-        void addFrame(SDL_Texture* newF);
+        void addFrame(Texture* newF);
         //SDL_Texture* operator[](int idx);
-        SDL_Texture* operator[](int idx);
+        Texture* operator[](int idx);
         uint8_t numFrames();
         //uint8_t getStep();
         uint8_t step_;
@@ -19,7 +20,7 @@ class Animation
         //==================================================================
         //Animation will cycle from last frame back to first frame:
         //e.g. 0,1,2,3,0,1,2,3,0,1,2 ... (see Entity & relevant subclasses)
-        std::vector<SDL_Texture*> frames_;
+        std::vector<Texture*> frames_;
         //==================================================================
 
 };

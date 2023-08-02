@@ -36,7 +36,7 @@ void Character::playAnimation(Animation* anim, float timestamp, float frameLengt
             anim->step_ = 0;
         }
         else anim->step_++;
-        changeTex((*anim)[anim->step_]);
+        changeTex((*anim)[anim->step_]->getTex());
         lastAction = timestamp;
     }
 }
@@ -47,7 +47,7 @@ void Character::playIdleAnim(float timestamp, float frameLength) {
             idleAnim->step_ = 0;
         }
         else idleAnim->step_++;
-        changeTex((*idleAnim)[idleAnim->step_]);
+        changeTex((*idleAnim)[idleAnim->step_]->getTex());
         lastAction = timestamp;
     }
 }

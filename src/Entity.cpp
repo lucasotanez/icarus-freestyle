@@ -28,9 +28,8 @@ const Hitbox& Entity::getHitbox() const {
 
 
 void Entity::changeTex(SDL_Texture* newTex){
-    return;
-    //if (tex == newTex) return; //nothing to do
-    //tex = newTex;
+    if (tex->getTex() == newTex) return; //nothing to do
+    tex->changeTex(newTex);
 }
 
 bool Entity::collides(const Entity& ent) const {

@@ -21,6 +21,9 @@ class Texture {
         int getHeight() { return _height; };
         SDL_Texture* getTex() { return _texture; };
 
+        // setters
+        inline void changeTex(SDL_Texture* newTex) { _texture = newTex; };
+
     private:
         static int _scaleUp;
         SDL_Texture* _texture;

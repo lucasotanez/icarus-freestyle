@@ -29,51 +29,25 @@ int main(int argc, char* args[])
     Texture charRight;
     charRight.loadFromFile("res/img/charRight.png");
 
-
-    //SDL_Texture* charRight = window.loadTexture("res/img/charRight.png");
-    //SDL_Texture* charLeft = window.loadTexture("res/img/charLeft.png");
-
-    //SDL_Texture* walkRight1 = window.loadTexture("res/img/charRightWalk1.png");
-    SDL_Texture* walkRight2 = window.loadTexture("res/img/charRightWalk2.png");
-
-    //SDL_Texture* walkLeft1 = window.loadTexture("res/img/charLeftWalk1.png");
-    SDL_Texture* walkLeft2 = window.loadTexture("res/img/charLeftWalk2.png");
-
-    //static SDL_Texture* laserX1 = window.loadTexture("res/img/laserHorizontal1.png");
-    SDL_Texture* laserX2 = window.loadTexture("res/img/laserHorizontal2.png");
-    SDL_Texture* laserX3 = window.loadTexture("res/img/laserHorizontal3.png");
-
-    //static SDL_Texture* laserY1 = window.loadTexture("res/img/laserVertical1.png");
-    SDL_Texture* laserY2 = window.loadTexture("res/img/laserVertical2.png");
-    SDL_Texture* laserY3 = window.loadTexture("res/img/laserVertical3.png");
-
-    //static SDL_Texture* laserNegS1 = window.loadTexture("res/img/laserNegSlope1.png");
-    SDL_Texture* laserNegS2 = window.loadTexture("res/img/laserNegSlope2.png");
-    SDL_Texture* laserNegS3 = window.loadTexture("res/img/laserNegSlope3.png");
-    
-    //static SDL_Texture* laserPosS1 = window.loadTexture("res/img/laserPosSlope1.png");
-    SDL_Texture* laserPosS2 = window.loadTexture("res/img/laserPosSlope2.png");
-    SDL_Texture* laserPosS3 = window.loadTexture("res/img/laserPosSlope3.png");
-
     SDL_Color red = { 255, 0, 0 };
     //SDL_Texture* testText = window.loadTextureFromString("Game Title", 24, red);
     Texture testText; testText.loadFromText("Game Title", red, 24);
 
     static Texture laserX1; laserX1.loadFromFile("res/img/laserHorizontal1.png");
-    //Texture laserX2; laserX1.loadFromFile("res/img/laserHorizontal2.png");
-    //Texture laserX3; laserX1.loadFromFile("res/img/laserHorizontal3.png");
+    Texture laserX2; laserX2.loadFromFile("res/img/laserHorizontal2.png");
+    Texture laserX3; laserX3.loadFromFile("res/img/laserHorizontal3.png");
 
     static Texture laserY1; laserY1.loadFromFile("res/img/laserVertical1.png");
-    //Texture laserY2; laserX1.loadFromFile("res/img/laserVertical2.png");
-    //Texture laserY3; laserX1.loadFromFile("res/img/laserVertical3.png");
+    Texture laserY2; laserY2.loadFromFile("res/img/laserVertical2.png");
+    Texture laserY3; laserY3.loadFromFile("res/img/laserVertical3.png");
 
     static Texture laserNegS1; laserNegS1.loadFromFile("res/img/laserNegSlope1.png");
-    //Texture laserNegS2; laserX1.loadFromFile("res/img/laserNegSlope2.png");
-    //Texture laserNegS3; laserX1.loadFromFile("res/img/laserNegSlope3.png");
+    Texture laserNegS2; laserNegS2.loadFromFile("res/img/laserNegSlope2.png");
+    Texture laserNegS3; laserNegS3.loadFromFile("res/img/laserNegSlope3.png");
 
     static Texture laserPosS1; laserPosS1.loadFromFile("res/img/laserPosSlope1.png");
-    //Texture laserPosS2; laserX1.loadFromFile("res/img/laserPosSlope2.png");
-    //Texture laserPosS3; laserX1.loadFromFile("res/img/laserPosSlope3.png");
+    Texture laserPosS2; laserPosS2.loadFromFile("res/img/laserPosSlope2.png");
+    Texture laserPosS3; laserPosS3.loadFromFile("res/img/laserPosSlope3.png");
 
     //END TEXTURES
     //===============================================================================
@@ -91,25 +65,25 @@ int main(int argc, char* args[])
     //walkLeftAnim.addFrame(walkLeft2);
     //walk left animation initialized
 
-    //static Animation laserIdleY;
-    //laserIdleY.addFrame(laserY1);
-    //laserIdleY.addFrame(laserY2);
-    //laserIdleY.addFrame(laserY3);
+    static Animation laserIdleY;
+    laserIdleY.addFrame(&laserY1);
+    laserIdleY.addFrame(&laserY2);
+    laserIdleY.addFrame(&laserY3);
 
-    //static Animation laserIdleX;
-    //laserIdleX.addFrame(laserX1);
-    //laserIdleX.addFrame(laserX2);
-    //laserIdleX.addFrame(laserX3);
-    //
-    //static Animation laserIdleNS;
-    //laserIdleNS.addFrame(laserNegS1);
-    //laserIdleNS.addFrame(laserNegS2);
-    //laserIdleNS.addFrame(laserNegS3);
-    //
-    //static Animation laserIdlePS;
-    //laserIdlePS.addFrame(laserPosS1);
-    //laserIdlePS.addFrame(laserPosS2);
-    //laserIdlePS.addFrame(laserPosS3);
+    static Animation laserIdleX;
+    laserIdleX.addFrame(&laserX1);
+    laserIdleX.addFrame(&laserX2);
+    laserIdleX.addFrame(&laserX3);
+    
+    static Animation laserIdleNS;
+    laserIdleNS.addFrame(&laserNegS1);
+    laserIdleNS.addFrame(&laserNegS2);
+    laserIdleNS.addFrame(&laserNegS3);
+    
+    static Animation laserIdlePS;
+    laserIdlePS.addFrame(&laserPosS1);
+    laserIdlePS.addFrame(&laserPosS2);
+    laserIdlePS.addFrame(&laserPosS3);
 
     //END ANIMATIONS
     //===============================================================================
@@ -161,7 +135,7 @@ int main(int argc, char* args[])
         public:
             LaserVertical(Vector2f p_pos)
             //: Character(p_pos, laserY1, 32, 128, Hitbox(4, 8), &laserIdleY)
-            : Character(p_pos, &laserY1, Hitbox(4, 8))
+            : Character(p_pos, &laserY1, Hitbox(4, 8), &laserIdleY)
             {}
     };
 
@@ -169,7 +143,7 @@ int main(int argc, char* args[])
         public:
             LaserHorizontal(Vector2f p_pos)
             //: Character(p_pos, laserX1, 128, 32, Hitbox(8, 4), &laserIdleX)
-            : Character(p_pos, &laserX1, Hitbox(8, 4))
+            : Character(p_pos, &laserX1, Hitbox(8, 4), &laserIdleX)
             {}
     };
 
@@ -177,7 +151,7 @@ int main(int argc, char* args[])
         public:
             LaserNegativeSlope(Vector2f p_pos)
             //: Character(p_pos, laserNegS1, 128, 128, Hitbox(8, 8), &laserIdleNS)
-            : Character(p_pos, &laserNegS1, Hitbox(8, 8))
+            : Character(p_pos, &laserNegS1, Hitbox(8, 8), &laserIdleNS)
             {}
 
             bool collides(const Entity &ent) const override {
@@ -210,7 +184,7 @@ int main(int argc, char* args[])
         public:
             LaserPositiveSlope(Vector2f p_pos)
             //: Character(p_pos, laserPosS1, 128, 128, Hitbox(8, 8), &laserIdlePS)
-            : Character(p_pos, &laserPosS1, Hitbox(8, 8))
+            : Character(p_pos, &laserPosS1, Hitbox(8, 8), &laserIdlePS)
             {}
 
             bool collides(const Entity &ent) const override {
@@ -397,7 +371,7 @@ int main(int argc, char* args[])
         bool passedObstacle = false;
         for (deque<Character*>::iterator it = obstacles.begin(); it != obstacles.end(); ++it){
             if ((*it)->getPos().x + (*it)->getCurrFrame().w < 0) passedObstacle = true;
-            //(*it)->playIdleAnim(utils::timeInSeconds(), 0.1);
+            (*it)->playIdleAnim(utils::timeInSeconds(), 0.1);
             window.render(**it);
         }
         if (passedObstacle) {
