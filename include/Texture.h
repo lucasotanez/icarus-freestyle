@@ -22,6 +22,7 @@ class Texture {
         SDL_Texture* getTex() { return _texture; };
 
     private:
+        static int _scaleUp;
         SDL_Texture* _texture;
 
         int _width;

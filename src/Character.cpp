@@ -1,7 +1,7 @@
 #include "Character.h"
 
-Character::Character(Vector2f p_pos, SDL_Texture* tex, int width, int height, Hitbox hb, Animation* idle)
-    : Entity(p_pos, tex, width, height, hb), inAir(false), lastAction(0), idleAnim(idle)
+Character::Character(Vector2f p_pos, Texture* tex, Hitbox hb, Animation* idle)
+    : Entity(p_pos, tex, hb), inAir(false), lastAction(0), idleAnim(idle)
 {}
 
 void Character::movePos(float speedX, float speedY){

@@ -3,10 +3,11 @@
 
 #include "Entity.h"
 #include "Animations.h"
+#include "Texture.h"
 
 class Character : public Entity{
     public:
-        Character(Vector2f p_pos, SDL_Texture* p_tex, int w, int h, Hitbox hb = Hitbox(4, 4), Animation* idle = nullptr);
+        Character(Vector2f p_pos, Texture* p_tex, Hitbox hb = Hitbox(4, 4), Animation* idle = nullptr);
         void movePos(float speedX, float speedY);
         void setPos(int x, int y);
         void setPosX(int x);

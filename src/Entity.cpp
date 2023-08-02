@@ -1,12 +1,12 @@
 #include "Entity.h"
 
-Entity::Entity(Vector2f p_pos, SDL_Texture* p_tex, int width, int height, Hitbox hb)
+Entity::Entity(Vector2f p_pos, Texture* p_tex, Hitbox hb)
     : pos(p_pos), tex(p_tex) , hitbox(hb)
 {
     currentFrame.x = 0;
     currentFrame.y = 0;
-    currentFrame.w = width/*32*/;
-    currentFrame.h = height/*32*/;
+    currentFrame.w = p_tex->getWidth()/*32*/;
+    currentFrame.h = p_tex->getHeight()/*32*/;
 }
 
 const Vector2f& Entity::getPos() const{
@@ -14,7 +14,8 @@ const Vector2f& Entity::getPos() const{
 }
 
 SDL_Texture* Entity::getTex() const {
-    return tex;
+    SDL_Texture* gotTex = tex->getTex();
+    return gotTex; 
 }
 
 const SDL_Rect& Entity::getCurrFrame() const{
@@ -27,8 +28,9 @@ const Hitbox& Entity::getHitbox() const {
 
 
 void Entity::changeTex(SDL_Texture* newTex){
-    if (tex == newTex) return; //nothing to do
-    tex = newTex;
+    return;
+    //if (tex == newTex) return; //nothing to do
+    //tex = newTex;
 }
 
 bool Entity::collides(const Entity& ent) const {

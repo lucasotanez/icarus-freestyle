@@ -4,6 +4,7 @@
 #include <SDL2/SDL_image.h>
 #include "Math.h"
 #include "Animations.h"
+#include "Texture.h"
 
 struct Hitbox {
     Hitbox(uint8_t x, uint8_t y) : marginX(x), marginY(y) {};
@@ -12,7 +13,7 @@ struct Hitbox {
 
 class Entity{
     public:
-        Entity(Vector2f p_pos, SDL_Texture* p_tex, int width, int height, Hitbox hb = Hitbox(4, 4));
+        Entity(Vector2f p_pos, Texture* p_tex, Hitbox hb = Hitbox(4, 4));
         virtual ~Entity(){};
         const Vector2f& getPos() const;
         SDL_Texture* getTex() const;
@@ -31,7 +32,7 @@ class Entity{
         SDL_Rect currentFrame;
         Hitbox hitbox;
         //SDL_Texture* tex;
-        SDL_Texture* tex;
+        Texture* tex;
         Animation* idleAnim;
 
 };

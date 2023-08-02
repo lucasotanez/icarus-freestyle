@@ -6,7 +6,7 @@
 #include "Entity.h"
 #include <vector>
 
-const uint8_t scaleF = 3;
+const static uint8_t scaleF = 3;
 
 class RenderWindow{
     public:
@@ -25,7 +25,7 @@ class RenderWindow{
         const void drawRects(std::vector<SDL_Rect*> &prims);
         const void drawRects(const std::vector<SDL_Rect*> &prims);
 
-        SDL_Renderer* getRenderer() { return renderer; };
+        inline SDL_Renderer* getRenderer() { return renderer; };
     private:
         SDL_Window* window;
         SDL_Renderer* renderer;
