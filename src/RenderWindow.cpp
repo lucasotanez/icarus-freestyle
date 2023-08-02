@@ -75,7 +75,7 @@ void RenderWindow::render(Entity& ent){
     dst.w = ent.getCurrFrame().w * scaleF;
     dst.h = ent.getCurrFrame().h * scaleF;
 
-    SDL_RenderCopy(renderer, ent.getTex(), &src, &dst);
+    SDL_RenderCopy(renderer, ent.getTex()->getTex(), &src, &dst);
 }
 
 void RenderWindow::display(){

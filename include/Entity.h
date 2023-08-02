@@ -16,7 +16,7 @@ class Entity{
         Entity(Vector2f p_pos, Texture* p_tex, Hitbox hb = Hitbox(4, 4));
         virtual ~Entity(){};
         const Vector2f& getPos() const;
-        SDL_Texture* getTex() const;
+        Texture* getTex() const;
         const SDL_Rect& getCurrFrame() const;
         virtual const Hitbox& getHitbox() const; 
 
@@ -24,7 +24,7 @@ class Entity{
         virtual void playAnimation(Animation*, float timestamp, float frameLength) = 0;
         void playIdleAnim(float timestamp, float frameLength) const;
 
-        void changeTex(SDL_Texture* newTex);
+        void changeTex(Texture* newTex);
 
         virtual bool collides(const Entity& ent) const;
     protected:

@@ -13,9 +13,8 @@ const Vector2f& Entity::getPos() const{
     return pos;
 }
 
-SDL_Texture* Entity::getTex() const {
-    SDL_Texture* gotTex = tex->getTex();
-    return gotTex; 
+Texture* Entity::getTex() const {
+    return tex; 
 }
 
 const SDL_Rect& Entity::getCurrFrame() const{
@@ -27,9 +26,9 @@ const Hitbox& Entity::getHitbox() const {
 }
 
 
-void Entity::changeTex(SDL_Texture* newTex){
-    if (tex->getTex() == newTex) return; //nothing to do
-    tex->changeTex(newTex);
+void Entity::changeTex(Texture* newTex){
+    if (tex == newTex) return; //nothing to do
+    tex = newTex;
 }
 
 bool Entity::collides(const Entity& ent) const {
