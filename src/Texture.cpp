@@ -44,6 +44,7 @@ bool Texture::loadFromFile(const char* path )
 bool Texture::loadFromText(const char* text, SDL_Color color, int size)
 {
     free();
+    std::cout << "openeing here" << std::endl;
     TTF_Font* font = TTF_OpenFont( "res/fonts/slkscr.ttf", size );
     if ( font == NULL ){
         std::cout << "Failed to load font: " << TTF_GetError() << std::endl;

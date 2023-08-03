@@ -4,6 +4,10 @@ Character::Character(Vector2f p_pos, Texture* tex, Hitbox hb, Animation* idle)
     : Entity(p_pos, tex, hb, idle)
 {}
 
+Character::Character()
+    : Entity()
+{}
+
 void Character::movePos(float speed, float){
     _pos.y -= speed;
 }

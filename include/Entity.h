@@ -13,13 +13,15 @@ struct Hitbox {
 
 class Entity{
     public:
-        Entity(Vector2f p_pos, Texture* p_tex, Hitbox hb = Hitbox(0, 0), Animation* idle = NULL);
+        Entity(Vector2f pos, Texture* p_tex = NULL, Hitbox hb = Hitbox(0, 0), Animation* idle = NULL);
+        Entity(Vector2f pos);
+        Entity();
         virtual ~Entity();
         const Vector2f& getPos() const;
-        Texture* getTex() const;
         const SDL_Rect& getCurrFrame() const;
         virtual const Hitbox* getHitbox() const; 
 
+        void setPos(Vector2f newPos);
         void setPos(int x, int y);
         void setPosX(int x);
         void setPosY(int y);
@@ -28,6 +30,7 @@ class Entity{
         void playIdleAnim(float timestamp, float frameLength);
 
         void changeTex(Texture* newTex);
+        Texture* getTex() const;
 
         virtual bool collides(const Entity& ent) const;
     protected:

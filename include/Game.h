@@ -30,8 +30,36 @@ struct Settings {
 
 };
 
+struct Assets {
+    Assets(Settings &game);
+
+    // TEXTURES ===================================================
+    Texture charTex, testText,
+        laserX1, laserX2, laserX3,
+        laserY1, laserY2, laserY3,
+        laserNegS1, laserNegS2, laserNegS3,
+        laserPosS1, laserPosS2, laserPosS3
+    ;
+
+    // ANIMATIONS =================================================
+    Animation
+        laserIdleY, laserIdleX, laserIdleNS, laserIdlePS
+    ;
+
+
+    // ENTITIES ===================================================
+    Character char0;
+
+    Entity screenMessage;
+    
+
+
+};
+
 // include game globals ( initialized in main.cpp )
 extern Settings game;
 extern RenderWindow window;
+extern Assets assets;
+
 
 #endif

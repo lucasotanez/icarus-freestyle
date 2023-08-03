@@ -1,12 +1,30 @@
 #include "Entity.h"
 
-Entity::Entity(Vector2f p_pos, Texture* p_tex, Hitbox hb, Animation* idle)
-    : _pos(p_pos), _tex(p_tex) , _hitbox(hb), _idleAnim(idle)
+Entity::Entity(Vector2f pos, Texture* p_tex, Hitbox hb, Animation* idle)
+    : _pos(pos), _tex(p_tex) , _hitbox(hb), _idleAnim(idle)
 {
     _currentFrame.x = 0;
     _currentFrame.y = 0;
     _currentFrame.w = p_tex->getWidth()/*32*/;
     _currentFrame.h = p_tex->getHeight()/*32*/;
+}
+
+Entity::Entity(Vector2f pos)
+    : _pos(pos), _tex(NULL), _hitbox(Hitbox(0,0)), _idleAnim(NULL)
+{
+    _currentFrame.x = 0;
+    _currentFrame.y = 0;
+    _currentFrame.w = 0;
+    _currentFrame.h = 0;
+}
+
+Entity::Entity()
+    : _pos(0, 0), _tex(NULL), _hitbox(Hitbox(0,0)), _idleAnim(NULL)
+{
+    _currentFrame.x = 0;
+    _currentFrame.y = 0;
+    _currentFrame.w = 0;
+    _currentFrame.h = 0;
 }
 
 Entity::~Entity(){}
@@ -26,6 +44,11 @@ const SDL_Rect& Entity::getCurrFrame() const{
 const Hitbox* Entity::getHitbox() const {
     if (_hitbox.marginY == 0 || _hitbox.marginX == 0) return NULL;
     return &_hitbox;
+}
+
+void Entity::setPos(Vector2f newPos) {
+    _pos.x = newPos.x;
+    _pos.y = newPos.y;
 }
 
 void Entity::setPos(int x, int y)
@@ -66,6 +89,8 @@ void Entity::playIdleAnim(float timestamp, float frameLength) {
 void Entity::changeTex(Texture* newTex){
     if (_tex == newTex) return; //nothing to do
     _tex = newTex;
+    _currentFrame.w = _tex->getWidth();
+    _currentFrame.h = _tex->getHeight();
 }
 
 bool Entity::collides(const Entity& ent) const {
