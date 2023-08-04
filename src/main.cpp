@@ -5,9 +5,6 @@
 #include <vector>
 #include <deque>
 #include <cstdlib>
-#include "Entity.h"
-#include "Utils.h"
-#include "Character.h"
 #include "Game.h"
 #include "Lasers.h"
 
@@ -20,12 +17,14 @@ int main(int argc, char* args[])
     if (!(IMG_Init(IMG_INIT_PNG))) cout << "IMG_Init FAILED: " << SDL_GetError() << endl;
     if (TTF_Init() < 0) cout << TTF_GetError() << endl;
 
-    cout << "Refresh Rate: " << window.getRefreshRate() << endl;
+    Game game;
+
+    cout << "Refresh Rate: " << game.window->getRefreshRate() << endl;
 
     //===============================================================================
     //===============================================================================
     //first item in list is rendered first (behind all other items)
-    vector<Entity*> entities = {&assets.char0, &assets.screenMessage};
+    vector<Entity*> entities = {&game.assets->char0, &game.assets->screenMessage};
     deque<Entity*> obstacles = {};
 
     //dynamic primitives
@@ -79,6 +78,14 @@ int main(int argc, char* args[])
 
         while (accumulator >= deltaTime)
         {
+
+            //char0.getPos().print();
+            //cout << playerSpeed << endl;
+            //if (char0.collides(catBed)) cout << "collision detected" << endl;
+
+
+            accumulator -= deltaTime;
+        }
             while (SDL_PollEvent(&event)){
                 if (event.type == SDL_QUIT){
                     game.running = false;
@@ -89,8 +96,7 @@ int main(int argc, char* args[])
                         game.running = false;
                     }
                     if (event.key.keysym.sym == SDLK_w){
-                        wPressed = true;
-                    }
+                        wPressed = true; }
                     if (event.key.keysym.sym == SDLK_a){
                         aPressed = true;
                     }
@@ -100,11 +106,11 @@ int main(int argc, char* args[])
                     if (event.key.keysym.sym == SDLK_s){
                         if (game.gameOver == true) game.restartRun(obstacles);
                     }
-                    if (event.key.keysym.sym == SDLK_SPACE && assets.char0.getPos().y >= 100){
+                    if (event.key.keysym.sym == SDLK_SPACE && game.assets->char0.getPos().y >= 100){
                         spacePressed = true;
                     }
                     if (event.key.keysym.sym == SDLK_r){
-                        window.loadRect(primRects, assets.char0.getPos().x * scaleF, assets.char0.getPos().y * scaleF, 180, 150);
+                        game.window->loadRect(primRects, game.assets->char0.getPos().x * scaleF, game.assets->char0.getPos().y * scaleF, 180, 150);
                     }
                     if (event.key.keysym.sym == SDLK_c){
                         primRects.clear();
@@ -134,14 +140,6 @@ int main(int argc, char* args[])
                     }
                 }
             }
-            //char0.getPos().print();
-            //cout << playerSpeed << endl;
-            //if (char0.collides(catBed)) cout << "collision detected" << endl;
-
-
-            accumulator -= deltaTime;
-        }
-
         if (!game.gameOver) {
             if (utils::timeInSeconds() - game.timeSinceSpeedIncrease > game.speedIncreaseDelay) {
                 game.gameSpeed -= game.speedIncreaseAmt;
@@ -149,10 +147,10 @@ int main(int argc, char* args[])
             }
         }
 
-        assets.char0.movePos(game.playerSpeed);
+        game.assets->char0.movePos(game.playerSpeed);
         for (deque<Entity*>::iterator it = obstacles.begin(); it != obstacles.end(); ++it){
             (**it).movePos(game.gameSpeed, 0);
-            if ((*it)->collides(assets.char0) && game.gameOver == false) {
+            if ((*it)->collides(game.assets->char0) && game.gameOver == false) {
                 game.gameOver = true;
                 cout << "collided with laser" << endl;
             }
@@ -177,10 +175,10 @@ int main(int argc, char* args[])
             if (utils::timeInSeconds() - game.laserTime >= game.laserDelay) {
                 int laserType = rand() % 4;
                 Entity* newEnt = nullptr;
-                if (laserType == 0) newEnt = new LaserHorizontal(Vector2f((float)game.width/scaleF, rand() % (game.height / scaleF - 80)));
-                else if (laserType == 1) newEnt = new LaserVertical(Vector2f((float)game.width/scaleF, rand() % (game.height / scaleF - 80)));
-                else if (laserType == 2) newEnt = new LaserNegativeSlope(Vector2f((float)game.width/scaleF, rand() % (game.height / scaleF - 80)));
-                else if (laserType == 3) newEnt = new LaserPositiveSlope(Vector2f((float)game.width/scaleF, rand() % (game.height / scaleF - 80)));
+                if (laserType == 0) newEnt = new LaserHorizontal(Vector2f((float)game.width/scaleF, rand() % (game.height / scaleF - 80)), game.assets);
+                else if (laserType == 1) newEnt = new LaserVertical(Vector2f((float)game.width/scaleF, rand() % (game.height / scaleF - 80)), game.assets);
+                else if (laserType == 2) newEnt = new LaserNegativeSlope(Vector2f((float)game.width/scaleF, rand() % (game.height / scaleF - 80)), game.assets);
+                else if (laserType == 3) newEnt = new LaserPositiveSlope(Vector2f((float)game.width/scaleF, rand() % (game.height / scaleF - 80)), game.assets);
                 obstacles.push_back(newEnt);
                 game.laserTime = utils::timeInSeconds();
             }
@@ -195,32 +193,32 @@ int main(int argc, char* args[])
         }
 
         // bring out of bounds character back into scope BEFORE rendering:
-        float checkY = assets.char0.getPos().y;
-        if (checkY + assets.char0.getCurrFrame().h > (float)(playHeight_y + roof_y)/scaleF) {
-            assets.char0.setPosY((playHeight_y + roof_y)/scaleF - assets.char0.getCurrFrame().h);
+        float checkY = game.assets->char0.getPos().y;
+        if (checkY + game.assets->char0.getCurrFrame().h > (float)(playHeight_y + roof_y)/scaleF) {
+            game.assets->char0.setPosY((playHeight_y + roof_y)/scaleF - game.assets->char0.getCurrFrame().h);
 
         } else if (checkY < ((float)roof_y/scaleF)) {
-            assets.char0.setPosY(roof_y/scaleF);
+            game.assets->char0.setPosY(roof_y/scaleF);
             game.playerSpeed = 0;
         }
 
         const float alpha = accumulator / deltaTime; // %?
 
-        window.clear();
+        game.window->clear();
 
         //prims loading
-        window.drawRects(constPrimRects);
-        window.drawRects(primRects);
+        game.window->drawRects(constPrimRects);
+        game.window->drawRects(primRects);
 
         for (vector<Entity*>::iterator it = entities.begin(); it != entities.end(); ++it){
-            window.render(**it);
+            game.window->render(**it);
         }
 
         bool passedObstacle = false;
         for (deque<Entity*>::iterator it = obstacles.begin(); it != obstacles.end(); ++it){
             if ((*it)->getPos().x + (*it)->getCurrFrame().w < 0) passedObstacle = true;
             (*it)->playIdleAnim(utils::timeInSeconds(), 0.1);
-            window.render(**it);
+            game.window->render(**it);
         }
         if (passedObstacle) {
             Entity* freeThis = obstacles.front();
@@ -228,12 +226,12 @@ int main(int argc, char* args[])
             delete freeThis;
         }
 
-        window.display();
+        game.window->display();
 
         int frameTicks = SDL_GetTicks() - startTicks; //ticks passed in this frame instance
 
-        if (frameTicks < 1000 / window.getRefreshRate()){ //if too few ticks have passed, delay this frame
-            SDL_Delay(1000 / window.getRefreshRate() - frameTicks);
+        if (frameTicks < 1000 / game.window->getRefreshRate()){ //if too few ticks have passed, delay this frame
+            SDL_Delay(1000 / game.window->getRefreshRate() - frameTicks);
         }
     }
 

@@ -1,6 +1,11 @@
 #include "Game.h"
 
-void Settings::restartRun(std::deque<Entity*>& obstacles) {
+Game::Game() : window(NULL), assets(NULL){
+    window = new RenderWindow("Working Title Redone", *this);
+    assets = new Assets(*this);
+}
+
+void Game::restartRun(std::deque<Entity*>& obstacles) {
     std::cout << "Restarting" << std::endl;
     while (!obstacles.empty()) {
         Entity* freeThis = obstacles.front();
@@ -14,30 +19,33 @@ void Settings::restartRun(std::deque<Entity*>& obstacles) {
     laserTime = utils::timeInSeconds();
 }
 
-Assets::Assets(Settings &game) {
+Assets::Assets(Game& game) {
     SDL_Color red = { 255, 0, 0 };
+
+    Texture* setWin = new Texture();
+    delete setWin;
 
     // ===========================================================
     // LOAD TEXTURES
-    charTex.loadFromFile("res/img/charRight.png");
+    charTex.loadFromFile("res/img/charRight.png", game.window);
 
-    testText.loadFromText("Game Title", red, 24);
+    testText.loadFromText("Game Title", red, 24, game.window);
 
-    laserX1.loadFromFile("res/img/laserHorizontal1.png");
-    laserX2.loadFromFile("res/img/laserHorizontal2.png");
-    laserX3.loadFromFile("res/img/laserHorizontal3.png");
+    laserX1.loadFromFile("res/img/laserHorizontal1.png", game.window);
+    laserX2.loadFromFile("res/img/laserHorizontal2.png", game.window);
+    laserX3.loadFromFile("res/img/laserHorizontal3.png", game.window);
 
-    laserY1.loadFromFile("res/img/laserVertical1.png");
-    laserY2.loadFromFile("res/img/laserVertical2.png");
-    laserY3.loadFromFile("res/img/laserVertical3.png");
+    laserY1.loadFromFile("res/img/laserVertical1.png", game.window);
+    laserY2.loadFromFile("res/img/laserVertical2.png", game.window);
+    laserY3.loadFromFile("res/img/laserVertical3.png", game.window);
 
-    laserNegS1.loadFromFile("res/img/laserNegSlope1.png");
-    laserNegS2.loadFromFile("res/img/laserNegSlope2.png");
-    laserNegS3.loadFromFile("res/img/laserNegSlope3.png");
+    laserNegS1.loadFromFile("res/img/laserNegSlope1.png", game.window);
+    laserNegS2.loadFromFile("res/img/laserNegSlope2.png", game.window);
+    laserNegS3.loadFromFile("res/img/laserNegSlope3.png", game.window);
 
-    laserPosS1.loadFromFile("res/img/laserPosSlope1.png");
-    laserPosS2.loadFromFile("res/img/laserPosSlope2.png");
-    laserPosS3.loadFromFile("res/img/laserPosSlope3.png");
+    laserPosS1.loadFromFile("res/img/laserPosSlope1.png", game.window);
+    laserPosS2.loadFromFile("res/img/laserPosSlope2.png", game.window);
+    laserPosS3.loadFromFile("res/img/laserPosSlope3.png", game.window);
     // END TEXTURES
     // =========================================================
 
@@ -71,8 +79,4 @@ Assets::Assets(Settings &game) {
     // END ENTITIES
     // ========================================================
 }
-
-Settings game;
-RenderWindow window = RenderWindow("Working Title", game.width, game.height);
-Assets assets(game);
 

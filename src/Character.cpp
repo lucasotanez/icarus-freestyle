@@ -5,7 +5,7 @@ Character::Character(Vector2f p_pos, Texture* tex, Hitbox hb, Animation* idle)
 {}
 
 Character::Character()
-    : Entity()
+    : Entity(), _runAnim(NULL), _hoverAnim(NULL), _deathAnim(NULL)
 {}
 
 void Character::movePos(float speed, float){

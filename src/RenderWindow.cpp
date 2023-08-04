@@ -1,13 +1,13 @@
 #include "RenderWindow.h"
 #include "Entity.h"
 #include <iostream>
+#include "Game.h"
 
 using namespace std;
 
-RenderWindow::RenderWindow(const char* p_title, int p_w, int p_h)
-    : window(NULL), renderer(NULL)
+RenderWindow::RenderWindow(const char* p_title, Game& game)
 {
-    window = SDL_CreateWindow(p_title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, p_w, p_h, SDL_WINDOW_SHOWN);
+    window = SDL_CreateWindow(p_title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, game.width, game.height, SDL_WINDOW_SHOWN);
 
     if (window == NULL){
         cout << "Window failed to load" << endl;
@@ -15,6 +15,10 @@ RenderWindow::RenderWindow(const char* p_title, int p_w, int p_h)
 
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 }
+
+RenderWindow::RenderWindow() 
+    : window(NULL), renderer(NULL)
+{}
 
 RenderWindow::~RenderWindow(){
     SDL_DestroyWindow(window);

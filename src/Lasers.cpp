@@ -1,15 +1,15 @@
 #include "Lasers.h"
 
-LaserVertical::LaserVertical(Vector2f pos)
-    : Entity(pos, &assets.laserY1, Hitbox(4, 8), &assets.laserIdleY)
+LaserVertical::LaserVertical(Vector2f pos, Assets* assets)
+    : Entity(pos, &assets->laserY1, Hitbox(4, 8), &assets->laserIdleY)
 {}
 
-LaserHorizontal::LaserHorizontal(Vector2f pos)
-    : Entity(pos, &assets.laserX1, Hitbox(8, 4), &assets.laserIdleX)
+LaserHorizontal::LaserHorizontal(Vector2f pos, Assets* assets)
+    : Entity(pos, &assets->laserX1, Hitbox(8, 4), &assets->laserIdleX)
 {}
 
-LaserNegativeSlope::LaserNegativeSlope(Vector2f pos)
-    : Entity(pos, &assets.laserNegS1, Hitbox(8,8), &assets.laserIdleNS)
+LaserNegativeSlope::LaserNegativeSlope(Vector2f pos, Assets* assets)
+    : Entity(pos, &assets->laserNegS1, Hitbox(8,8), &assets->laserIdleNS)
 {}
 
 bool LaserNegativeSlope::collides(const Entity &ent) const {
@@ -36,9 +36,8 @@ bool LaserNegativeSlope::collides(const Entity &ent) const {
     } else return false;
 }
 
-
-LaserPositiveSlope::LaserPositiveSlope(Vector2f pos)
-    : Entity(pos, &assets.laserPosS1, Hitbox(8, 8), &assets.laserIdlePS)
+LaserPositiveSlope::LaserPositiveSlope(Vector2f pos, Assets* assets)
+    : Entity(pos, &assets->laserPosS1, Hitbox(8, 8), &assets->laserIdlePS)
 {}
 
 bool LaserPositiveSlope::collides(const Entity &ent) const {

@@ -6,23 +6,23 @@
 
 class LaserVertical : public Entity {
     public:
-        LaserVertical(Vector2f pos);
+        LaserVertical(Vector2f pos, Assets* assets);
 };
 
 class LaserHorizontal : public Entity {
     public:
-        LaserHorizontal(Vector2f pos);
+        LaserHorizontal(Vector2f pos, Assets* assets);
 };
 
 class LaserNegativeSlope : public Entity {
     public:
-        LaserNegativeSlope(Vector2f pos);
+        LaserNegativeSlope(Vector2f pos, Assets* assets);
         bool collides(const Entity &ent) const override;
 };
 
 class LaserPositiveSlope : public Entity {
     public:
-        LaserPositiveSlope(Vector2f pos);
+        LaserPositiveSlope(Vector2f pos, Assets* assets);
         bool collides(const Entity &ent) const override;
 };
 
