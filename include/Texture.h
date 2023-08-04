@@ -4,15 +4,17 @@
 #include "SDL2/SDL_image.h"
 #include "SDL2/SDL_ttf.h"
 
+class RenderWindow;
+
 class Texture {
     public:
         Texture();
 
         ~Texture();
 
-        bool loadFromFile(const char* path );
+        bool loadFromFile(const char* path, RenderWindow* window);
 
-        bool loadFromText(const char* text, SDL_Color color, int size);
+        bool loadFromText(const char* text, SDL_Color color, int size, RenderWindow* window);
 
         void free();
 
@@ -20,6 +22,9 @@ class Texture {
         int getWidth() { return _width; };
         int getHeight() { return _height; };
         SDL_Texture* getTex() { return _texture; };
+
+        // setters
+        inline void changeTex(SDL_Texture* newTex) { _texture = newTex; };
 
     private:
         SDL_Texture* _texture;

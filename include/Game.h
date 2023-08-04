@@ -4,9 +4,36 @@
 #include "Utils.h"
 #include "Character.h"
 #include "RenderWindow.h"
+#include "Texture.h"
 
-struct Settings {
+struct Game;
+
+struct Assets {
+    Assets(Game &game);
+    Assets() {};
+
+    // TEXTURES ===================================================
+    Texture charTex, testText,
+        laserX1, laserX2, laserX3,
+        laserY1, laserY2, laserY3,
+        laserNegS1, laserNegS2, laserNegS3,
+        laserPosS1, laserPosS2, laserPosS3
+    ;
+
+    // ANIMATIONS =================================================
+    Animation
+        laserIdleY, laserIdleX, laserIdleNS, laserIdlePS
+    ;
+
+    // ENTITIES ===================================================
+    Character char0;
+
+    Entity screenMessage;
+
+};
+struct Game {
     public:
+        Game();
         // game logic settings
         bool running = true;
         bool gameOver = true;
@@ -24,14 +51,17 @@ struct Settings {
         int width = 1480;
         int height = 920;
 
-        void restartRun(std::deque<Character*>& obstacles); 
+        void restartRun(std::deque<Entity*>& obstacles); 
+
+        RenderWindow* window;
+        Assets* assets;
 
     private:
 
 };
 
-// include game globals
-extern Settings game;
-extern RenderWindow window;
+
+// include game globals ( initialized in main.cpp )
+//extern Game game;
 
 #endif

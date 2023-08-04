@@ -6,11 +6,14 @@
 #include "Entity.h"
 #include <vector>
 
-const uint8_t scaleF = 3;
+struct Game;
+
+const static uint8_t scaleF = 3;
 
 class RenderWindow{
     public:
-        RenderWindow(const char* p_title, int p_w, int p_h);
+        RenderWindow(const char* p_title, Game& game);
+        RenderWindow();
         ~RenderWindow();
         SDL_Texture* loadTexture(const char* p_filePath);
         SDL_Texture* loadTextureFromString(const char* message, int size, SDL_Color color);
@@ -25,7 +28,7 @@ class RenderWindow{
         const void drawRects(std::vector<SDL_Rect*> &prims);
         const void drawRects(const std::vector<SDL_Rect*> &prims);
 
-        SDL_Renderer* getRenderer() { return renderer; };
+        inline SDL_Renderer* getRenderer() { return renderer; };
     private:
         SDL_Window* window;
         SDL_Renderer* renderer;
