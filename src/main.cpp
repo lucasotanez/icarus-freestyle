@@ -117,7 +117,7 @@ int main(int argc, char* args[])
 
         game.assets->char0.movePos(game.playerSpeed);
         for (deque<Entity*>::iterator it = game.obstacles.begin(); it != game.obstacles.end(); ++it){
-            (**it).movePos(game.gameSpeed, 0);
+            (*it)->movePos(game.gameSpeed, 0);
             if ((*it)->collides(game.assets->char0) && game.gameOver == false) {
                 game.gameOver = true;
                 cout << "collided with laser" << endl;

@@ -91,8 +91,8 @@ void Entity::playIdleAnim(float timestamp, float frameLength) {
 void Entity::changeTex(Texture* newTex){
     if (_tex == newTex) return; //nothing to do
     _tex = newTex;
-    _currentFrame.w = _tex->getWidth();
-    _currentFrame.h = _tex->getHeight();
+    _currentFrame.w = _tex->getWidth() * _scaleF;
+    _currentFrame.h = _tex->getHeight() * _scaleF;
 }
 
 bool Entity::collides(const Entity& ent) const {
