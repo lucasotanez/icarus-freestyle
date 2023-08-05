@@ -1,21 +1,17 @@
 #include "Animations.h"
 
 Animation::Animation()
-    : frames_({}), step_(0)
+    : _frames({}), step(0)
 {}
 
 void Animation::addFrame(Texture* newF){
-    frames_.push_back(newF);
+    _frames.push_back(newF);
 }
 
 Texture* Animation::operator[](int idx){
-    return frames_[idx];
+    return _frames[idx];
 }
 
 uint8_t Animation::numFrames(){
-    return frames_.size();
+    return _frames.size();
 }
-
-// uint8_t Animation::getStep(){
-//     return step_;
-// }

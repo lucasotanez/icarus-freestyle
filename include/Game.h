@@ -42,6 +42,9 @@ struct Game {
         time_t laserTime = utils::timeInSeconds();
         float gameSpeed = 0;
 
+        SDL_Event event;
+        bool wPressed, sPressed, dPressed, aPressed, spacePressed, shiftPressed;
+
         // adjustable settings
         float playerSpeed = -5.5;
         float laserDelay = 1.5;
@@ -60,6 +63,10 @@ struct Game {
 
         void restartRun(std::deque<Entity*>& obstacles); 
 
+        void pollUserEvents();
+        void logicRun(); // All core game logic
+        void updateScreen();
+
         RenderWindow* window;
         Assets* assets;
 
@@ -69,6 +76,12 @@ struct Game {
         std::deque<Entity*> obstacles = {};
         std::vector<SDL_Rect*> primRects = {};
 
+        // Bookkeeping settings
+        const float deltaTime = 0.01;
+        float accumulator = 0.0;
+        float currentTime = utils::timeInSeconds();
+
+        int startTicks = -1; // ticks at the start of a frame
 
 };
 

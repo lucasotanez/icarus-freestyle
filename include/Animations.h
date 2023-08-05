@@ -14,14 +14,14 @@ class Animation
         Texture* operator[](int idx);
         uint8_t numFrames();
         //uint8_t getStep();
-        uint8_t step_;
+        uint8_t step;
 
     private:
         //FRAMES: Art needed (frames loaded in main.cpp)
         //==================================================================
         //Animation will cycle from last frame back to first frame:
         //e.g. 0,1,2,3,0,1,2,3,0,1,2 ... (see Entity & relevant subclasses)
-        std::vector<Texture*> frames_;
+        std::vector<Texture*> _frames;
         //==================================================================
 
 };

@@ -7,8 +7,6 @@ Entity::Entity(Vector2f pos, Texture* p_tex, Hitbox hb, Animation* idle)
     _currentFrame.y = 0;
     _currentFrame.w = p_tex->getWidth() * _scaleF;
     _currentFrame.h = p_tex->getHeight() * _scaleF;
-    std::cout << "original: " << p_tex->getWidth() << " " << _scaleF << std::endl;
-    std::cout << _currentFrame.w << std::endl;
 }
 
 Entity::Entity(Vector2f pos)
@@ -77,12 +75,12 @@ void Entity::movePos(float speedX, float speedY) {
 void Entity::playIdleAnim(float timestamp, float frameLength) {
     if (_idleAnim != NULL) {
         if (timestamp - _lastFrame >= frameLength /*animation speed*/){
-            if (_idleAnim->step_ == (_idleAnim->numFrames())-1){
-                _idleAnim->step_ = 0;
+            if (_idleAnim->step == (_idleAnim->numFrames())-1){
+                _idleAnim->step = 0;
             }
-            else _idleAnim->step_++;
+            else _idleAnim->step++;
 
-            changeTex((*_idleAnim)[_idleAnim->step_]);
+            changeTex((*_idleAnim)[_idleAnim->step]);
             _lastFrame = timestamp;
         }
     }

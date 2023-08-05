@@ -9,9 +9,8 @@ RenderWindow::RenderWindow(const char* p_title, Game& game)
 {
     window = SDL_CreateWindow(p_title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, game.width, game.height, SDL_WINDOW_SHOWN);
 
-    if (window == NULL){
-        cout << "Window failed to load" << endl;
-    }
+    if (window == NULL) cout << "Window failed to load" << endl;
+    else cout << "Refresh Rate: " << getRefreshRate() << endl;
 
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 }
