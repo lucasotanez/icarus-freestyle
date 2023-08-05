@@ -48,7 +48,7 @@ struct Game {
         // adjustable settings
         float playerSpeed = -5.5;
         float laserDelay = 1.5;
-        float slideFactor = 0.01;
+        float slideFactor = 0.02;
         int speedIncreaseDelay = 25;
         float speedIncreaseAmt = 0.2;
 
