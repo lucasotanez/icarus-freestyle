@@ -8,8 +8,6 @@
 
 struct Game;
 
-const static uint8_t scaleF = 3;
-
 class RenderWindow{
     public:
         RenderWindow(const char* p_title, Game& game);
@@ -21,12 +19,11 @@ class RenderWindow{
         int getRefreshRate();
 
         void clear();
-        void render(Entity& ent);
+        void render(Entity* ent);
         void display();
 
         void loadRect(std::vector<SDL_Rect*> &prims, int x, int y, int w, int h);
         const void drawRects(std::vector<SDL_Rect*> &prims);
-        const void drawRects(const std::vector<SDL_Rect*> &prims);
 
         inline SDL_Renderer* getRenderer() { return renderer; };
     private:

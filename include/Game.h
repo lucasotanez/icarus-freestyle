@@ -1,5 +1,6 @@
 #ifndef GAME_H
 #define GAME_H
+#include <vector>
 #include <deque>
 #include "Utils.h"
 #include "Character.h"
@@ -42,7 +43,7 @@ struct Game {
         float gameSpeed = 0;
 
         // adjustable settings
-        float playerSpeed = -2.5;
+        float playerSpeed = -5.5;
         float laserDelay = 1.5;
         float slideFactor = 0.01;
         int speedIncreaseDelay = 25;
@@ -51,12 +52,23 @@ struct Game {
         int width = 1480;
         int height = 920;
 
+        int roofY;
+        int floorY;
+
+        SDL_Rect windowRect;
+        SDL_Rect playSpace;
+
         void restartRun(std::deque<Entity*>& obstacles); 
 
         RenderWindow* window;
         Assets* assets;
 
-    private:
+        // All objects in these containers are shown on screen
+        // Objects are rendered first to last (one in front of previous)
+        std::vector<Entity*> entities = {};
+        std::deque<Entity*> obstacles = {};
+        std::vector<SDL_Rect*> primRects = {};
+
 
 };
 

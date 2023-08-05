@@ -65,21 +65,21 @@ void RenderWindow::clear(){
 }
 
 
-void RenderWindow::render(Entity& ent){
+void RenderWindow::render(Entity* ent){
 
     SDL_Rect src;
-    src.x = ent.getCurrFrame().x;
-    src.y = ent.getCurrFrame().y;
-    src.w = ent.getCurrFrame().w;
-    src.h = ent.getCurrFrame().h;
+    src.x = ent->getCurrFrame().x;
+    src.y = ent->getCurrFrame().y;
+    src.w = ent->getCurrFrame().w;
+    src.h = ent->getCurrFrame().h;
 
     SDL_Rect dst;
-    dst.x = ent.getPos().x * scaleF;
-    dst.y = ent.getPos().y * scaleF;
-    dst.w = ent.getCurrFrame().w * scaleF;
-    dst.h = ent.getCurrFrame().h * scaleF;
+    dst.x = ent->getPos().x;
+    dst.y = ent->getPos().y;
+    dst.w = ent->getCurrFrame().w;
+    dst.h = ent->getCurrFrame().h;
 
-    SDL_RenderCopy(renderer, ent.getTex()->getTex(), &src, &dst);
+    SDL_RenderCopy(renderer, ent->getTex()->getTex(), &src, &dst);
 }
 
 void RenderWindow::display(){
@@ -96,17 +96,7 @@ void RenderWindow::loadRect(vector<SDL_Rect*> &prims, int x, int y, int w, int h
     prims.push_back(rect);
 }
 
-
 const void RenderWindow::drawRects(vector<SDL_Rect*> &prims){
-    SDL_SetRenderDrawColor(renderer, 0, 255, 200, 255);
-    for (int i = 0; i < prims.size(); i++){
-        SDL_RenderDrawRect(renderer, prims[i]);
-        SDL_RenderFillRect(renderer, prims[i]);
-    }
-
-}
-
-const void RenderWindow::drawRects(const vector<SDL_Rect*> &prims){
     for (int i = 0; i < prims.size(); i++){
         if (i == 0) {
             SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);

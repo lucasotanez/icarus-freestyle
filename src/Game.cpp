@@ -3,6 +3,23 @@
 Game::Game() : window(NULL), assets(NULL){
     window = new RenderWindow("Working Title Redone", *this);
     assets = new Assets(*this);
+
+    windowRect.x = 0;
+    windowRect.y = 0;
+    windowRect.w = width;
+    windowRect.h = height;
+
+    roofY = 90;
+    floorY = height - roofY;
+
+    playSpace.x = 0;
+    playSpace.y = roofY;
+    playSpace.w = width;
+    playSpace.h = floorY - roofY;
+
+
+    primRects.push_back(&windowRect);
+    primRects.push_back(&playSpace);
 }
 
 void Game::restartRun(std::deque<Entity*>& obstacles) {
@@ -12,7 +29,7 @@ void Game::restartRun(std::deque<Entity*>& obstacles) {
         obstacles.pop_front();
         delete freeThis;
     }
-    gameSpeed = -2;
+    gameSpeed = -5;
     gameOver = false;
     laserDelay = 1.5;
     timeSinceSpeedIncrease = utils::timeInSeconds();
@@ -22,8 +39,9 @@ void Game::restartRun(std::deque<Entity*>& obstacles) {
 Assets::Assets(Game& game) {
     SDL_Color red = { 255, 0, 0 };
 
-    Texture* setWin = new Texture();
-    delete setWin;
+    // TODO: set static variables for various classes with setter function (not implemented)
+    //Texture* setWin = new Texture();
+    //delete setWin;
 
     // ===========================================================
     // LOAD TEXTURES
@@ -72,10 +90,12 @@ Assets::Assets(Game& game) {
     // ========================================================
     // LOAD ENTITIES
     //char0.changeTex(&charTex);
-    //char0.setPos(Vector2f(20, (float)game.height/scaleF/2));
-    char0 = Character(Vector2f(20, (float)game.height/scaleF/2), &charTex);
+    char0 = Character(Vector2f(game.width * 0.1, (float)game.height/2), &charTex);
+    game.entities.push_back(&char0);
 
     screenMessage = Entity(Vector2f(50, 50), &testText);
+    game.entities.push_back(&screenMessage);
+
     // END ENTITIES
     // ========================================================
 }

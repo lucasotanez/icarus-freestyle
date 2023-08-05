@@ -4,13 +4,19 @@ LaserVertical::LaserVertical(Vector2f pos, Assets* assets)
     : Entity(pos, &assets->laserY1, Hitbox(4, 8), &assets->laserIdleY)
 {}
 
+LaserVertical::LaserVertical()
+    : Entity()
+{}
+
 LaserHorizontal::LaserHorizontal(Vector2f pos, Assets* assets)
     : Entity(pos, &assets->laserX1, Hitbox(8, 4), &assets->laserIdleX)
 {}
 
 LaserNegativeSlope::LaserNegativeSlope(Vector2f pos, Assets* assets)
     : Entity(pos, &assets->laserNegS1, Hitbox(8,8), &assets->laserIdleNS)
-{}
+{
+    
+}
 
 bool LaserNegativeSlope::collides(const Entity &ent) const {
     // hitbox dimensions should be square for this class of laser

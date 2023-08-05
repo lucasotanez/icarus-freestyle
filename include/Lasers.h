@@ -7,6 +7,7 @@
 class LaserVertical : public Entity {
     public:
         LaserVertical(Vector2f pos, Assets* assets);
+        LaserVertical();
 };
 
 class LaserHorizontal : public Entity {

@@ -21,36 +21,6 @@ int main(int argc, char* args[])
 
     cout << "Refresh Rate: " << game.window->getRefreshRate() << endl;
 
-    //===============================================================================
-    //===============================================================================
-    //first item in list is rendered first (behind all other items)
-    vector<Entity*> entities = {&game.assets->char0, &game.assets->screenMessage};
-    deque<Entity*> obstacles = {};
-
-    //dynamic primitives
-    vector<SDL_Rect*> primRects;
-
-    SDL_Rect bgVoid;
-    bgVoid.x = 0;
-    bgVoid.y = 0;
-    bgVoid.w = game.width;
-    bgVoid.h = game.height;
-
-    int roof_y, playHeight_y;
-    roof_y = 20 * scaleF;
-    playHeight_y = game.height - 2 * (20 * scaleF);
-
-    SDL_Rect playSpace;
-    playSpace.x = 0;
-    playSpace.y = roof_y;
-    playSpace.w = game.width;
-    playSpace.h = playHeight_y;
-
-    //constant primitives
-    const vector<SDL_Rect*> constPrimRects = {&bgVoid, &playSpace};
-
-    //=======================
-
     SDL_Event event;
 
     const float deltaTime = 0.01;
@@ -96,7 +66,8 @@ int main(int argc, char* args[])
                         game.running = false;
                     }
                     if (event.key.keysym.sym == SDLK_w){
-                        wPressed = true; }
+                        wPressed = true;
+                    }
                     if (event.key.keysym.sym == SDLK_a){
                         aPressed = true;
                     }
@@ -104,16 +75,13 @@ int main(int argc, char* args[])
                         dPressed = true;
                     }
                     if (event.key.keysym.sym == SDLK_s){
-                        if (game.gameOver == true) game.restartRun(obstacles);
+                        if (game.gameOver == true) game.restartRun(game.obstacles);
                     }
                     if (event.key.keysym.sym == SDLK_SPACE && game.assets->char0.getPos().y >= 100){
                         spacePressed = true;
                     }
-                    if (event.key.keysym.sym == SDLK_r){
-                        game.window->loadRect(primRects, game.assets->char0.getPos().x * scaleF, game.assets->char0.getPos().y * scaleF, 180, 150);
-                    }
                     if (event.key.keysym.sym == SDLK_c){
-                        primRects.clear();
+                        game.primRects.clear();
                     }
                     if (event.key.keysym.sym == SDLK_LSHIFT && shiftPressed == false){
                         shiftPressed = true;
@@ -148,7 +116,7 @@ int main(int argc, char* args[])
         }
 
         game.assets->char0.movePos(game.playerSpeed);
-        for (deque<Entity*>::iterator it = obstacles.begin(); it != obstacles.end(); ++it){
+        for (deque<Entity*>::iterator it = game.obstacles.begin(); it != game.obstacles.end(); ++it){
             (**it).movePos(game.gameSpeed, 0);
             if ((*it)->collides(game.assets->char0) && game.gameOver == false) {
                 game.gameOver = true;
@@ -158,28 +126,29 @@ int main(int argc, char* args[])
 
         if (spacePressed){
             if (!game.gameOver) {
-                if (game.playerSpeed < 2.5) {
-                    game.playerSpeed += 0.15;
+                if (game.playerSpeed < 5.5) {
+                    game.playerSpeed += 0.4;
                 }
-                else game.playerSpeed = 2.5;
+                else game.playerSpeed = 5.5;
             }
         }
         else {
-            if (game.playerSpeed > -2.5) {
-                game.playerSpeed -= 0.1;
+            if (game.playerSpeed > -5.5) {
+                game.playerSpeed -= 0.4;
             }
-            else game.playerSpeed = -2.5;
+            else game.playerSpeed = -5.5;
         }
 
         if (game.gameSpeed != 0){
             if (utils::timeInSeconds() - game.laserTime >= game.laserDelay) {
                 int laserType = rand() % 4;
                 Entity* newEnt = nullptr;
-                if (laserType == 0) newEnt = new LaserHorizontal(Vector2f((float)game.width/scaleF, rand() % (game.height / scaleF - 80)), game.assets);
-                else if (laserType == 1) newEnt = new LaserVertical(Vector2f((float)game.width/scaleF, rand() % (game.height / scaleF - 80)), game.assets);
-                else if (laserType == 2) newEnt = new LaserNegativeSlope(Vector2f((float)game.width/scaleF, rand() % (game.height / scaleF - 80)), game.assets);
-                else if (laserType == 3) newEnt = new LaserPositiveSlope(Vector2f((float)game.width/scaleF, rand() % (game.height / scaleF - 80)), game.assets);
-                obstacles.push_back(newEnt);
+                int randY = game.playSpace.y + (rand() % ( game.playSpace.h - game.playSpace.y ));
+                if (laserType == 0) newEnt = new LaserHorizontal(Vector2f((float)game.width, randY), game.assets);
+                else if (laserType == 1) newEnt = new LaserVertical(Vector2f((float)game.width, randY), game.assets);
+                else if (laserType == 2) newEnt = new LaserNegativeSlope(Vector2f((float)game.width, randY), game.assets);
+                else if (laserType == 3) newEnt = new LaserPositiveSlope(Vector2f((float)game.width, randY), game.assets);
+                game.obstacles.push_back(newEnt);
                 game.laserTime = utils::timeInSeconds();
             }
         }
@@ -194,11 +163,11 @@ int main(int argc, char* args[])
 
         // bring out of bounds character back into scope BEFORE rendering:
         float checkY = game.assets->char0.getPos().y;
-        if (checkY + game.assets->char0.getCurrFrame().h > (float)(playHeight_y + roof_y)/scaleF) {
-            game.assets->char0.setPosY((playHeight_y + roof_y)/scaleF - game.assets->char0.getCurrFrame().h);
+        if (checkY + game.assets->char0.getCurrFrame().h > game.floorY) {
+            game.assets->char0.setPosY(game.floorY - game.assets->char0.getCurrFrame().h);
 
-        } else if (checkY < ((float)roof_y/scaleF)) {
-            game.assets->char0.setPosY(roof_y/scaleF);
+        } else if (checkY < (game.roofY)) {
+            game.assets->char0.setPosY(game.roofY);
             game.playerSpeed = 0;
         }
 
@@ -207,22 +176,21 @@ int main(int argc, char* args[])
         game.window->clear();
 
         //prims loading
-        game.window->drawRects(constPrimRects);
-        game.window->drawRects(primRects);
+        game.window->drawRects(game.primRects);
 
-        for (vector<Entity*>::iterator it = entities.begin(); it != entities.end(); ++it){
-            game.window->render(**it);
+        for (vector<Entity*>::iterator it = game.entities.begin(); it != game.entities.end(); ++it){
+            game.window->render(*it);
         }
 
         bool passedObstacle = false;
-        for (deque<Entity*>::iterator it = obstacles.begin(); it != obstacles.end(); ++it){
+        for (deque<Entity*>::iterator it = game.obstacles.begin(); it != game.obstacles.end(); ++it){
             if ((*it)->getPos().x + (*it)->getCurrFrame().w < 0) passedObstacle = true;
             (*it)->playIdleAnim(utils::timeInSeconds(), 0.1);
-            game.window->render(**it);
+            game.window->render(*it);
         }
         if (passedObstacle) {
-            Entity* freeThis = obstacles.front();
-            obstacles.pop_front();
+            Entity* freeThis = game.obstacles.front();
+            game.obstacles.pop_front();
             delete freeThis;
         }
 

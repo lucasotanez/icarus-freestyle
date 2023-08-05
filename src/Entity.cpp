@@ -5,8 +5,10 @@ Entity::Entity(Vector2f pos, Texture* p_tex, Hitbox hb, Animation* idle)
 {
     _currentFrame.x = 0;
     _currentFrame.y = 0;
-    _currentFrame.w = p_tex->getWidth()/*32*/;
-    _currentFrame.h = p_tex->getHeight()/*32*/;
+    _currentFrame.w = p_tex->getWidth() * _scaleF;
+    _currentFrame.h = p_tex->getHeight() * _scaleF;
+    std::cout << "original: " << p_tex->getWidth() << " " << _scaleF << std::endl;
+    std::cout << _currentFrame.w << std::endl;
 }
 
 Entity::Entity(Vector2f pos)

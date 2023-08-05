@@ -33,7 +33,10 @@ class Entity{
         Texture* getTex() const;
 
         virtual bool collides(const Entity& ent) const;
+
+        inline int getScale() { return _scaleF; };
     protected:
+        int _scaleF = 3;
         float _lastFrame; // timestamp of last animation frame
         Vector2f _pos; // top left corner
         SDL_Rect _currentFrame;
