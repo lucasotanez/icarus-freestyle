@@ -214,8 +214,6 @@ Assets::Assets(Game& game) {
     SDL_Color red = { 255, 0, 0 };
 
     // TODO: set static variables for various classes with setter function (not implemented)
-    //Texture* setWin = new Texture();
-    //delete setWin;
 
     // ===========================================================
     // LOAD TEXTURES

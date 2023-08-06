@@ -7,31 +7,8 @@
 #include "RenderWindow.h"
 #include "Texture.h"
 
-struct Game;
+struct Assets;
 
-struct Assets {
-    Assets(Game &game);
-    Assets() {};
-
-    // TEXTURES ===================================================
-    Texture charTex, testText,
-        laserX1, laserX2, laserX3,
-        laserY1, laserY2, laserY3,
-        laserNegS1, laserNegS2, laserNegS3,
-        laserPosS1, laserPosS2, laserPosS3
-    ;
-
-    // ANIMATIONS =================================================
-    Animation
-        laserIdleY, laserIdleX, laserIdleNS, laserIdlePS
-    ;
-
-    // ENTITIES ===================================================
-    Character char0;
-
-    Entity screenMessage;
-
-};
 struct Game {
     public:
         Game();
@@ -85,8 +62,28 @@ struct Game {
 
 };
 
+struct Assets {
+    Assets(Game &game);
+    Assets() {};
 
-// include game globals ( initialized in main.cpp )
-//extern Game game;
+    // TEXTURES ===================================================
+    Texture charTex, testText,
+        laserX1, laserX2, laserX3,
+        laserY1, laserY2, laserY3,
+        laserNegS1, laserNegS2, laserNegS3,
+        laserPosS1, laserPosS2, laserPosS3
+    ;
+
+    // ANIMATIONS =================================================
+    Animation
+        laserIdleY, laserIdleX, laserIdleNS, laserIdlePS
+    ;
+
+    // ENTITIES ===================================================
+    Character char0;
+
+    Entity screenMessage;
+
+};
 
 #endif
