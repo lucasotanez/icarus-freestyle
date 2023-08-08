@@ -15,9 +15,11 @@ struct Game {
         // game logic settings
         bool running = true;
         bool gameOver = true;
+        bool gameOverUI = false;
         time_t timeSinceSpeedIncrease = utils::timeInSeconds();
         time_t laserTime = utils::timeInSeconds();
         float gameSpeed = 0;
+        time_t timeSinceMove = utils::timeInSeconds();
 
         SDL_Event event;
         bool wPressed, sPressed, dPressed, aPressed, spacePressed, shiftPressed;
@@ -52,6 +54,7 @@ struct Game {
         std::vector<Entity*> entities = {};
         std::deque<Entity*> obstacles = {};
         std::vector<SDL_Rect*> primRects = {};
+        std::vector<Entity*> ui = {};
 
         // Bookkeeping settings
         const float deltaTime = 0.01;

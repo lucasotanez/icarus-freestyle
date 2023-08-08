@@ -43,6 +43,7 @@ void Game::restartRun(std::deque<Entity*>& obstacles) {
     laserDelay = 1.5;
     timeSinceSpeedIncrease = utils::timeInSeconds();
     laserTime = utils::timeInSeconds();
+    gameOverUI = false;
 }
 
 void Game::pollUserEvents() {
@@ -75,7 +76,10 @@ void Game::pollUserEvents() {
                 dPressed = true;
             }
             if (event.key.keysym.sym == SDLK_s){
-                if (gameOver == true) restartRun(obstacles);
+                if (gameOver == true) {
+                    restartRun(obstacles);
+                    ui.clear();
+                }
             }
             if (event.key.keysym.sym == SDLK_SPACE && assets->char0.getPos().y >= 100){
                 spacePressed = true;
@@ -161,16 +165,23 @@ void Game::logicRun() {
         if ( gameSpeed < 0 ) {
             gameSpeed += slideFactor;
         }
-        if ( gameSpeed > 0 ) gameSpeed = 0;
+        else if ( gameSpeed > 0 ) {
+            gameSpeed = 0;
+            if (gameOverUI == false) {
+                ui.push_back(&assets->screenMessage);
+                gameOverUI = true;
+            }
+        }
     }
 
     // bring out of bounds character back into scope BEFORE rendering:
+    float buf = float(assets->char0.getCurrFrame().h)/(assets->char0.getHitbox()->marginY);
     float checkY = assets->char0.getPos().y;
-    if (checkY + assets->char0.getCurrFrame().h > floorY) {
-        assets->char0.setPosY(floorY - assets->char0.getCurrFrame().h);
+    if (checkY + assets->char0.getCurrFrame().h - buf > floorY) {
+        assets->char0.setPosY(floorY - assets->char0.getCurrFrame().h + buf);
 
-    } else if (checkY < (roofY)) {
-        assets->char0.setPosY(roofY);
+    } else if (checkY + buf < (roofY)) {
+        assets->char0.setPosY(roofY - buf);
         playerSpeed = 0;
     }
 
@@ -193,6 +204,10 @@ void Game::updateScreen() {
         Entity* freeThis = obstacles.front();
         obstacles.pop_front();
         delete freeThis;
+    }
+
+    for (std::vector<Entity*>::iterator it = ui.begin(); it != ui.end(); ++it) {
+        window->render(*it);
     }
 
     window->display();
@@ -266,7 +281,6 @@ Assets::Assets(Game& game) {
     game.entities.push_back(&char0);
 
     screenMessage = Entity(Vector2f(50, 50), &testText);
-    game.entities.push_back(&screenMessage);
 
     // END ENTITIES
     // ========================================================
