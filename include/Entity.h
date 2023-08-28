@@ -13,7 +13,7 @@ struct Hitbox {
 
 class Entity{
     public:
-        Entity(Vector2f pos, Texture* p_tex = NULL, Hitbox hb = Hitbox(0, 0), Animation* idle = NULL);
+        Entity(Vector2f pos, Texture* p_tex = NULL, Hitbox hb = Hitbox(0, 0), Animation* idle = NULL, int scale = 3);
         Entity(Vector2f pos);
         Entity();
         virtual ~Entity();
@@ -28,6 +28,7 @@ class Entity{
         virtual void movePos(float speedX, float speedY);
 
         void playIdleAnim(float timestamp, float frameLength);
+        virtual void playRunAnim(float timestamp, float frameLength);
 
         void changeTex(Texture* newTex);
         Texture* getTex() const;
@@ -36,7 +37,7 @@ class Entity{
 
         inline int getScale() { return _scaleF; };
     protected:
-        int _scaleF = 3;
+        int _scaleF;
         float _lastFrame; // timestamp of last animation frame
         Vector2f _pos; // top left corner
         SDL_Rect _currentFrame;

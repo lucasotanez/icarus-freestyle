@@ -37,8 +37,9 @@ struct Game {
         int roofY;
         int floorY;
 
-        SDL_Rect windowRect;
         SDL_Rect playSpace;
+        SDL_Rect floor;
+        SDL_Rect roof;
 
         void restartRun(std::deque<Entity*>& obstacles); 
 
@@ -51,6 +52,7 @@ struct Game {
 
         // All objects in these containers are shown on screen
         // Objects are rendered first to last (one in front of previous)
+        std::deque<Entity*> background = {};
         std::vector<Entity*> entities = {};
         std::deque<Entity*> obstacles = {};
         std::vector<SDL_Rect*> primRects = {};
@@ -74,18 +76,23 @@ struct Assets {
         laserX1, laserX2, laserX3,
         laserY1, laserY2, laserY3,
         laserNegS1, laserNegS2, laserNegS3,
-        laserPosS1, laserPosS2, laserPosS3
+        laserPosS1, laserPosS2, laserPosS3,
+        charFlap1, charFlap2, charFlap3, charFlap4, charFlap5,
+        charWalk1, charWalk2, charWalk3, charWalk4
     ;
+
+    Texture sky0;
 
     // ANIMATIONS =================================================
     Animation
-        laserIdleY, laserIdleX, laserIdleNS, laserIdlePS
+        laserIdleY, laserIdleX, laserIdleNS, laserIdlePS, icarusFlap, icarusWalk
     ;
 
     // ENTITIES ===================================================
     Character char0;
 
     Entity screenMessage;
+    Entity backgroundImage;
 
 };
 

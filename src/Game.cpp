@@ -11,22 +11,27 @@ Game::Game() : window(NULL), assets(NULL) {
     window = new RenderWindow("Working Title Redone", *this);
     assets = new Assets(*this);
 
-    windowRect.x = 0;
-    windowRect.y = 0;
-    windowRect.w = width;
-    windowRect.h = height;
-
     roofY = 90;
     floorY = height - roofY;
+
+    roof.x = 0;
+    roof.y = 0;
+    roof.h = roofY;
+    roof.w = width;
+
+    floor.x = 0;
+    floor.y = floorY;
+    floor.h = roofY;
+    floor.w = width;
 
     playSpace.x = 0;
     playSpace.y = roofY;
     playSpace.w = width;
     playSpace.h = floorY - roofY;
 
-
-    primRects.push_back(&windowRect);
     primRects.push_back(&playSpace);
+    primRects.push_back(&floor);
+    primRects.push_back(&roof);
 
     wPressed = sPressed = dPressed = aPressed = spacePressed = shiftPressed = false;
 }
@@ -122,6 +127,19 @@ void Game::logicRun() {
         }
     }
 
+    bool pushBackground = false;
+    for (std::deque<Entity*>::iterator it = background.begin(); it != background.end(); ++it){
+        (*it)->movePos(gameSpeed/4 - 0.4 , 0);
+        if ((it + 1) == background.end()){
+            if ((*it)->getPos().x <= 0) {
+                pushBackground = true;
+            }
+        }
+    }
+    if (pushBackground) {
+        background.push_back(new Entity(Vector2f(width, 0), &assets->sky0, Hitbox(0,0), NULL, 1));
+    }
+
     assets->char0.movePos(playerSpeed);
     for (std::deque<Entity*>::iterator it = obstacles.begin(); it != obstacles.end(); ++it){
         (*it)->movePos(gameSpeed, 0);
@@ -180,9 +198,7 @@ void Game::logicRun() {
     if (checkY + assets->char0.getCurrFrame().h - buf > floorY) {
         assets->char0.setPosY(floorY - assets->char0.getCurrFrame().h + buf);
 
-    } else if (checkY + buf < (roofY)) {
-        assets->char0.setPosY(roofY - buf);
-        playerSpeed = 0;
+    } else if (checkY + buf < (roofY)) { assets->char0.setPosY(roofY - buf); playerSpeed = 0;
     }
 
     if (running == false) std::cout << "Session time: [" << utils::timeInSeconds() << " seconds]" << std::endl;
@@ -190,10 +206,27 @@ void Game::logicRun() {
 
 void Game::updateScreen() {
     window->clear();
-    window->drawRects(primRects);
-    for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); ++it) {
+
+    bool popBackground = false;
+    for (std::deque<Entity*>::iterator it = background.begin(); it != background.end(); ++it){
+        if ((*it)->getPos().x + (*it)->getCurrFrame().w < 0) popBackground = true;
         window->render(*it);
     }
+    if (popBackground) {
+        // bad free????
+        //Entity* temp = background.front();
+        background.pop_front();
+        //delete temp;
+    }
+
+    window->drawRects(primRects);
+
+    for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); ++it) {
+        if (entities[0]->getPos().x > floorY - 5) entities[0]->playRunAnim(utils::timeInSeconds(), 0.1);
+        else entities[0]->playIdleAnim(utils::timeInSeconds(), 0.1);
+        window->render(*it);
+    }
+
     bool passedObstacle = false;
     for (std::deque<Entity*>::iterator it = obstacles.begin(); it != obstacles.end(); ++it){
         if ((*it)->getPos().x + (*it)->getCurrFrame().w < 0) passedObstacle = true;
@@ -232,7 +265,17 @@ Assets::Assets(Game& game) {
 
     // ===========================================================
     // LOAD TEXTURES
-    charTex.loadFromFile("res/img/charRight.png", game.window);
+    charTex.loadFromFile("res/img/icarus0.png", game.window);
+    charFlap1.loadFromFile("res/img/icarus1.png", game.window);
+    charFlap2.loadFromFile("res/img/icarus2.png", game.window);
+    charFlap3.loadFromFile("res/img/icarus3.png", game.window);
+    charFlap4.loadFromFile("res/img/icarus4.png", game.window);
+    charFlap5.loadFromFile("res/img/icarus5.png", game.window);
+
+    charWalk1.loadFromFile("res/img/icarusWalk1.png", game.window);
+    charWalk2.loadFromFile("res/img/icarusWalk2.png", game.window);
+    charWalk3.loadFromFile("res/img/icarusWalk3.png", game.window);
+    charWalk4.loadFromFile("res/img/icarusWalk4.png", game.window);
 
     testText.loadFromText("Game Title", red, 24, game.window);
 
@@ -251,11 +294,28 @@ Assets::Assets(Game& game) {
     laserPosS1.loadFromFile("res/img/laserPosSlope1.png", game.window);
     laserPosS2.loadFromFile("res/img/laserPosSlope2.png", game.window);
     laserPosS3.loadFromFile("res/img/laserPosSlope3.png", game.window);
+
+    sky0.loadFromFile("res/img/sky.png", game.window);
+    sky0.background(&game);
     // END TEXTURES
     // =========================================================
 
     // =========================================================
     // LOAD ANIMATIONS
+    icarusFlap.addFrame(&charTex);
+    icarusFlap.addFrame(&charFlap1);
+    icarusFlap.addFrame(&charFlap3);
+    icarusFlap.addFrame(&charFlap1);
+    icarusFlap.addFrame(&charTex);
+    icarusFlap.addFrame(&charFlap2);
+    icarusFlap.addFrame(&charFlap4);
+    icarusFlap.addFrame(&charFlap2);
+
+    icarusWalk.addFrame(&charWalk1);
+    icarusWalk.addFrame(&charWalk2);
+    icarusWalk.addFrame(&charWalk3);
+    icarusWalk.addFrame(&charWalk4);
+
     laserIdleY.addFrame(&laserY1);
     laserIdleY.addFrame(&laserY2);
     laserIdleY.addFrame(&laserY3);
@@ -277,7 +337,9 @@ Assets::Assets(Game& game) {
     // ========================================================
     // LOAD ENTITIES
     //char0.changeTex(&charTex);
-    char0 = Character(Vector2f(game.width * 0.1, (float)game.height/2), &charTex);
+    backgroundImage = Entity(Vector2f(0,0), &sky0, Hitbox(0,0), NULL, 1);
+    game.background.push_back(&backgroundImage);
+    char0 = Character(Vector2f(game.width * 0.1, (float)game.height/2), &charTex, Hitbox(4, 4), &icarusFlap, &icarusWalk);
     game.entities.push_back(&char0);
 
     screenMessage = Entity(Vector2f(50, 50), &testText);
@@ -285,4 +347,3 @@ Assets::Assets(Game& game) {
     // END ENTITIES
     // ========================================================
 }
-

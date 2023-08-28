@@ -7,16 +7,15 @@
 
 class Character : public Entity{
     public:
-        Character(Vector2f p_pos, Texture* p_tex, Hitbox hb = Hitbox(4, 4), Animation* idle = nullptr);
+        Character(Vector2f p_pos, Texture* p_tex, Hitbox hb = Hitbox(4, 4), Animation* idle = nullptr, Animation* run = nullptr);
         Character();
         void movePos(float speed, float nullSpeed = 0) override;
+        void playRunAnim(float timestamp, float frameLength);
 
         // TODO: create functions to play stored animations
 
     private:
         Animation* _runAnim;
-        Animation* _hoverAnim;
-        Animation* _deathAnim;
 
 };
 

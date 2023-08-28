@@ -1,7 +1,7 @@
 #include "Entity.h"
 
-Entity::Entity(Vector2f pos, Texture* p_tex, Hitbox hb, Animation* idle)
-    : _pos(pos), _tex(p_tex) , _hitbox(hb), _idleAnim(idle)
+Entity::Entity(Vector2f pos, Texture* p_tex, Hitbox hb, Animation* idle, int scale)
+    : _pos(pos), _tex(p_tex) , _hitbox(hb), _idleAnim(idle), _scaleF(scale)
 {
     _currentFrame.x = 0;
     _currentFrame.y = 0;
@@ -10,7 +10,7 @@ Entity::Entity(Vector2f pos, Texture* p_tex, Hitbox hb, Animation* idle)
 }
 
 Entity::Entity(Vector2f pos)
-    : _pos(pos), _tex(NULL), _hitbox(Hitbox(0,0)), _idleAnim(NULL)
+    : _pos(pos), _tex(NULL), _hitbox(Hitbox(0,0)), _idleAnim(NULL), _scaleF(3)
 {
     _currentFrame.x = 0;
     _currentFrame.y = 0;
@@ -19,7 +19,7 @@ Entity::Entity(Vector2f pos)
 }
 
 Entity::Entity()
-    : _pos(0, 0), _tex(NULL), _hitbox(Hitbox(0,0)), _idleAnim(NULL)
+    : _pos(0, 0), _tex(NULL), _hitbox(Hitbox(0,0)), _idleAnim(NULL), _scaleF(3)
 {
     _currentFrame.x = 0;
     _currentFrame.y = 0;
@@ -84,6 +84,10 @@ void Entity::playIdleAnim(float timestamp, float frameLength) {
             _lastFrame = timestamp;
         }
     }
+}
+
+void Entity::playRunAnim(float timestamp, float frameLength) {
+    return;
 }
 
 void Entity::changeTex(Texture* newTex){

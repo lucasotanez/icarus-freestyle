@@ -6,15 +6,20 @@
 
 class RenderWindow;
 
+class Game;
+
 class Texture {
     public:
         Texture();
 
         ~Texture();
 
-        bool loadFromFile(const char* path, RenderWindow* window);
+        virtual bool loadFromFile(const char* path, RenderWindow* window);
 
         bool loadFromText(const char* text, SDL_Color color, int size, RenderWindow* window);
+
+        // convert texture to background
+        void background(const Game* game);
 
         void free();
 
@@ -26,7 +31,7 @@ class Texture {
         // setters
         inline void changeTex(SDL_Texture* newTex) { _texture = newTex; };
 
-    private:
+    protected:
         SDL_Texture* _texture;
 
         int _width;

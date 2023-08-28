@@ -61,6 +61,11 @@ bool Texture::loadFromText(const char* text, SDL_Color color, int size, RenderWi
     return _texture != NULL;
 }
 
+void Texture::background(const Game* game) {
+    _width = game->width + /*padding*/ 25;
+    _height = game->height;
+}
+
 void Texture::free()
 {
     if ( _texture != NULL ) {
